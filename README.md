@@ -61,8 +61,8 @@ The backend is a robust RESTful API that handles data persistence, user authenti
 1.  Navigate to the directory: `cd server`
 2.  Create a virtual environment:
     ```bash
-    python -m venv venv
-    source venv/bin/activate  # Windows: venv\Scripts\activate
+    python -m venv .venv
+    .venv/Scripts/activate  # Windows: venv\Scripts\activate
     ```
 3.  Install dependencies:
     ```bash
