@@ -1,9 +1,9 @@
-import 'package:Follower/screens/authentication_screen.dart'
+import 'package:Glorious/screens/authentication_screen.dart'
     deferred as auth_screen;
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:Follower/services/theme_provider.dart';
+import 'package:Glorious/services/theme_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsScreen extends StatefulWidget {

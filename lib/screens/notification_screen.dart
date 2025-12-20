@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart' hide Notification;
-import 'package:Follower/models/notification.dart';
-import 'package:Follower/services/api_service.dart';
+import 'package:Glorious/models/notification.dart';
+import 'package:Glorious/services/api_service.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});

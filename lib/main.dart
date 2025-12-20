@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:Follower/services/theme_provider.dart';
-import 'package:Follower/services/notification_service.dart';
-import 'package:Follower/theme.dart';
-import 'package:Follower/screens/authentication_screen.dart';
-import 'package:Follower/screens/main_navigation.dart';
+import 'package:Glorious/services/theme_provider.dart';
+import 'package:Glorious/services/notification_service.dart';
+import 'package:Glorious/theme.dart';
+import 'package:Glorious/screens/authentication_screen.dart';
+import 'package:Glorious/screens/main_navigation.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:Follower/services/api_service.dart';
-import 'package:Follower/screens/passwordresetpage.dart' deferred as reset_page;
+import 'package:Glorious/services/api_service.dart';
+import 'package:Glorious/screens/passwordresetpage.dart' deferred as reset_page;
 
 class AuthenticationScreen extends StatefulWidget {
   const AuthenticationScreen({super.key});

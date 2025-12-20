@@ -1,11 +1,15 @@
-import 'package:Follower/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:Follower/models/user.dart';
-import 'package:Follower/models/friend_request.dart';
-import 'package:Follower/services/api_service.dart';
-import 'package:Follower/widgets/friend_card.dart';
-import 'package:Follower/widgets/friend_request_card.dart';
-import 'package:Follower/screens/profile_screen.dart';
+import 'package:Glorious/services/api_service.dart';
+import 'package:Glorious/screens/chat_screen.dart' deferred as chat;
+// ignore: unused_import
+import 'package:Glorious/models/user.dart' deferred as user_model;
+// ignore: unused_import
+import 'package:Glorious/models/friend_request.dart'
+    deferred as friend_request_model;
+import 'package:Glorious/widgets/friend_card.dart' deferred as friend_widget;
+import 'package:Glorious/widgets/friend_request_card.dart'
+    deferred as friend_request_widget;
+import 'package:Glorious/screens/profile_screen.dart' deferred as profile;
 
 class FriendsScreen extends StatefulWidget {
   const FriendsScreen({super.key});
@@ -17,16 +21,17 @@ class FriendsScreen extends StatefulWidget {
 class _FriendsScreenState extends State<FriendsScreen>
     with TickerProviderStateMixin {
   final ApiService _apiService = ApiService();
-  List<User> _friends = [];
-  List<FriendRequest> _friendRequests = [];
-  List<FriendRequest> _sentFriendRequests = [];
+  List<dynamic> _friends = []; // Changed from List<User>
+  List<dynamic> _friendRequests = []; // Changed from List<FriendRequest>
+  List<dynamic> _sentFriendRequests = []; // Changed from List<FriendRequest>
   bool _isLoading = true;
+  bool _librariesLoaded = false;
   // ignore: unused_field
   int _selectedTab = 0;
   late TabController _tabController;
   final TextEditingController _searchController = TextEditingController();
-  List<User> _searchResults = [];
-  bool _isSearching = false; // Add loading state for search
+  List<dynamic> _searchResults = []; // Changed from List<User>
+  bool _isSearching = false;
 
   @override
   void initState() {
@@ -37,7 +42,7 @@ class _FriendsScreenState extends State<FriendsScreen>
         _selectedTab = _tabController.index;
       });
     });
-    _loadData();
+    _loadDeferredLibraries();
   }
 
   @override
@@ -47,7 +52,28 @@ class _FriendsScreenState extends State<FriendsScreen>
     super.dispose();
   }
 
+  Future<void> _loadDeferredLibraries() async {
+    try {
+      await Future.wait([
+        chat.loadLibrary(),
+        user_model.loadLibrary(),
+        friend_request_model.loadLibrary(),
+        friend_widget.loadLibrary(),
+        friend_request_widget.loadLibrary(),
+        profile.loadLibrary(),
+      ]);
+      setState(() => _librariesLoaded = true);
+      _loadData();
+    } catch (e) {
+      if (!mounted) return;
+      _showErrorSnackBar('Failed to load required resources');
+      setState(() => _isLoading = false);
+    }
+  }
+
   Future<void> _loadData() async {
+    if (!_librariesLoaded) return;
+
     setState(() => _isLoading = true);
     try {
       final currentUserId = await _apiService.getUserId();
@@ -57,20 +83,28 @@ class _FriendsScreenState extends State<FriendsScreen>
       }
       final friends = await _apiService.getFriends(currentUserId);
       final requests = await _apiService.getFriendRequests(currentUserId);
-      final sentRequests = await _apiService.getSentFriendRequests(currentUserId);
+      final sentRequests =
+          await _apiService.getSentFriendRequests(currentUserId);
+
+      if (!mounted) return;
+
       setState(() {
         _friends = friends;
         _friendRequests = requests;
         _sentFriendRequests = sentRequests;
       });
     } catch (e) {
+      if (!mounted) return;
       _showErrorSnackBar('Failed to load friends data');
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
   void _showErrorSnackBar(String message) {
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
@@ -81,7 +115,7 @@ class _FriendsScreenState extends State<FriendsScreen>
     );
   }
 
-  Future<void> _removeFriend(User friend) async {
+  Future<void> _removeFriend(dynamic friend) async {
     final currentUserId = await _apiService.getUserId();
     if (currentUserId == null) {
       _showErrorSnackBar('User not logged in.');
@@ -89,6 +123,9 @@ class _FriendsScreenState extends State<FriendsScreen>
     }
     try {
       await _apiService.removeFriend(currentUserId, friend.id);
+
+      if (!mounted) return;
+
       setState(() {
         _friends.removeWhere((u) => u.id == friend.id);
       });
@@ -121,18 +158,20 @@ class _FriendsScreenState extends State<FriendsScreen>
     try {
       final results = await _apiService.searchUsers(query);
 
+      if (!mounted) return;
+
       setState(() {
         _searchResults = results;
         _isSearching = false;
       });
 
       print('Search results updated: ${_searchResults.length} users found');
-      // Debug: Print the first user if available
       if (results.isNotEmpty) {
         print('First user: ${results[0].name}, Email: ${results[0].email}');
       }
     } catch (e) {
       print('Search error: $e');
+      if (!mounted) return;
       setState(() {
         _searchResults = [];
         _isSearching = false;
@@ -141,7 +180,7 @@ class _FriendsScreenState extends State<FriendsScreen>
     }
   }
 
-  Future<void> _sendFriendRequest(User user) async {
+  Future<void> _sendFriendRequest(dynamic user) async {
     final currentUserId = await _apiService.getUserId();
     if (currentUserId == null) {
       _showErrorSnackBar('User not logged in.');
@@ -149,6 +188,9 @@ class _FriendsScreenState extends State<FriendsScreen>
     }
     try {
       await _apiService.sendFriendRequest(currentUserId, user.id);
+
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Friend request sent to ${user.name}!'),
@@ -156,14 +198,15 @@ class _FriendsScreenState extends State<FriendsScreen>
           behavior: SnackBarBehavior.floating,
         ),
       );
-      Navigator.pop(context); // Close the search dialog
+      Navigator.pop(context);
     } catch (e) {
       _showErrorSnackBar('Failed to send friend request.');
     }
   }
 
   void _showFindFriendsDialog() {
-    // Reset search when opening dialog
+    if (!_librariesLoaded) return;
+
     _searchController.clear();
     _searchResults.clear();
 
@@ -218,7 +261,7 @@ class _FriendsScreenState extends State<FriendsScreen>
                       controller: _searchController,
                       onChanged: (query) async {
                         await _searchUsers(query);
-                        setModalState(() {}); // Update modal state
+                        setModalState(() {});
                       },
                       decoration: InputDecoration(
                         hintText: 'Search by name ...',
@@ -324,8 +367,7 @@ class _FriendsScreenState extends State<FriendsScreen>
                                     itemCount: _searchResults.length,
                                     itemBuilder: (context, index) {
                                       final user = _searchResults[index];
-                                      print(
-                                          'Rendering user: ${user.name}'); // Debug print
+                                      print('Rendering user: ${user.name}');
                                       return ListTile(
                                         leading: CircleAvatar(
                                           backgroundImage: user
@@ -337,7 +379,6 @@ class _FriendsScreenState extends State<FriendsScreen>
                                               : null,
                                         ),
                                         title: Text(user.name),
-                                       
                                         trailing: IconButton(
                                           icon: const Icon(Icons.person_add),
                                           onPressed: () =>
@@ -361,7 +402,11 @@ class _FriendsScreenState extends State<FriendsScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-      
+        title: const Text(
+          'Friends',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: Colors.white,
@@ -411,21 +456,34 @@ class _FriendsScreenState extends State<FriendsScreen>
           ],
         ),
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : TabBarView(
-              controller: _tabController,
-              children: [
-                _buildFriendsTab(),
-                _buildRequestsTab(),
-                _buildSentRequestsTab(),
-              ],
-            ),
+      body: !_librariesLoaded
+          ? const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('Loading friends...'),
+                ],
+              ),
+            )
+          : _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : TabBarView(
+                  controller: _tabController,
+                  children: [
+                    _buildFriendsTab(),
+                    _buildRequestsTab(),
+                    _buildSentRequestsTab(),
+                  ],
+                ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _showFindFriendsDialog,
+        onPressed: _librariesLoaded ? _showFindFriendsDialog : null,
         icon: const Icon(Icons.person_add),
         label: const Text('Find Friends'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: _librariesLoaded
+            ? Theme.of(context).colorScheme.primary
+            : Theme.of(context).colorScheme.primary.withOpacity(0.5),
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
       ),
     );
@@ -482,7 +540,7 @@ class _FriendsScreenState extends State<FriendsScreen>
         itemCount: _friends.length,
         itemBuilder: (context, index) {
           final friend = _friends[index];
-          return FriendCard(
+          return friend_widget.FriendCard(
             user: friend,
             onTap: () => _messageFriend(friend),
             onMessage: () => _messageFriend(friend),
@@ -530,7 +588,7 @@ class _FriendsScreenState extends State<FriendsScreen>
         itemCount: _friendRequests.length,
         itemBuilder: (context, index) {
           final request = _friendRequests[index];
-          return FriendRequestCard(
+          return friend_request_widget.FriendRequestCard(
             friendRequest: request,
             onAccept: () => _acceptFriendRequest(request),
             onDecline: () => _declineFriendRequest(request),
@@ -595,25 +653,29 @@ class _FriendsScreenState extends State<FriendsScreen>
     );
   }
 
-  void _viewFriendProfile(User friend) {
+  Future<void> _viewFriendProfile(dynamic friend) async {
+    if (!_librariesLoaded) return;
+
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ProfileScreen(user: friend),
+        builder: (context) => profile.ProfileScreen(user: friend),
       ),
     );
   }
 
-  void _messageFriend(User friend) {
+  Future<void> _messageFriend(dynamic friend) async {
+    if (!_librariesLoaded) return;
+
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ChatScreen(friend: friend),
+        builder: (context) => chat.ChatScreen(friend: friend),
       ),
     );
   }
 
-  Future<void> _acceptFriendRequest(FriendRequest request) async {
+  Future<void> _acceptFriendRequest(dynamic request) async {
     final currentUserId = await _apiService.getUserId();
     if (currentUserId == null) {
       _showErrorSnackBar('User not logged in.');
@@ -621,18 +683,15 @@ class _FriendsScreenState extends State<FriendsScreen>
     }
     try {
       await _apiService.respondToFriendRequest(request.id, 'accept');
+
+      if (!mounted) return;
+
+      // Create a new user object from the request data
       setState(() {
         _friendRequests.removeWhere((r) => r.id == request.id);
-        _friends.add(User(
-          id: request.fromUserId,
-          name: request.fromUserName,
-          email:
-              '${request.fromUserName.toLowerCase().replaceAll(' ', '')}@example.com',
-          profileImage: request.fromUserProfileImage,
-          joinDate: DateTime.now().subtract(const Duration(days: 30)),
-          postsCount: 15,
-          notesCount: 8,
-        ));
+        if (request.fromUser != null) {
+          _friends.add(request.fromUser);
+        }
       });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -646,7 +705,7 @@ class _FriendsScreenState extends State<FriendsScreen>
     }
   }
 
-  Future<void> _declineFriendRequest(FriendRequest request) async {
+  Future<void> _declineFriendRequest(dynamic request) async {
     final currentUserId = await _apiService.getUserId();
     if (currentUserId == null) {
       _showErrorSnackBar('User not logged in.');
@@ -654,6 +713,9 @@ class _FriendsScreenState extends State<FriendsScreen>
     }
     try {
       await _apiService.respondToFriendRequest(request.id, 'reject');
+
+      if (!mounted) return;
+
       setState(() {
         _friendRequests.removeWhere((r) => r.id == request.id);
       });

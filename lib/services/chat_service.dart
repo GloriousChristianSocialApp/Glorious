@@ -1,5 +1,5 @@
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-import 'package:Follower/services/api_service.dart'; // 👈 import ApiService
+import 'package:Glorious/services/api_service.dart'; // 👈 import ApiService
 
 class ChatService {
   IO.Socket? socket;

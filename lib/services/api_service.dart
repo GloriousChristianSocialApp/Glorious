@@ -1,15 +1,15 @@
-import 'package:Follower/models/account.dart';
+import 'package:Glorious/models/account.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:typed_data';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:Follower/models/bible_verse.dart';
-import 'package:Follower/models/note.dart';
-import 'package:Follower/models/post.dart';
-import 'package:Follower/models/user.dart';
-import 'package:Follower/models/friend_request.dart';
-import 'package:Follower/models/activity_item.dart'; // Import ActivityItem
-import 'package:Follower/models/notification.dart';
+import 'package:Glorious/models/bible_verse.dart';
+import 'package:Glorious/models/note.dart';
+import 'package:Glorious/models/post.dart';
+import 'package:Glorious/models/user.dart';
+import 'package:Glorious/models/friend_request.dart';
+import 'package:Glorious/models/activity_item.dart'; // Import ActivityItem
+import 'package:Glorious/models/notification.dart';
 
 
 class ApiResponse<T> {

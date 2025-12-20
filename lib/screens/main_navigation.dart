@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:Follower/screens/bible_screen.dart' deferred as Bible;
-import 'package:Follower/screens/notes_screen.dart' deferred as Notes;
-import 'package:Follower/screens/feed_screen.dart' deferred as Feed;
-import 'package:Follower/screens/friends_screen.dart' deferred as Friends;
-import 'package:Follower/screens/account_screen.dart' deferred as Account;
-import 'package:Follower/screens/notification_screen.dart'
+import 'package:Glorious/screens/bible_screen.dart' deferred as Bible;
+import 'package:Glorious/screens/notes_screen.dart' deferred as Notes;
+import 'package:Glorious/screens/feed_screen.dart' deferred as Feed;
+import 'package:Glorious/screens/friends_screen.dart' deferred as Friends;
+import 'package:Glorious/screens/account_screen.dart' deferred as Account;
+import 'package:Glorious/screens/notification_screen.dart'
     deferred as Notifications;
 
 class MainNavigation extends StatefulWidget {

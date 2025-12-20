@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:Follower/models/user.dart';
+import 'package:Glorious/models/user.dart';
 
 class FriendCard extends StatelessWidget {
   final User user;

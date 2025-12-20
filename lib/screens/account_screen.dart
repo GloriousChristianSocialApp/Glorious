@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
-import '../models/account.dart';
-import '../models/activity_item.dart'; // Add this import
-import '../screens/settings_screen.dart'; // Assuming you have this
-import 'package:Follower/screens/edit_profile_screen.dart';
-import 'package:Follower/screens/notification_screen.dart';
+// ignore: unused_import
+import '../models/account.dart' deferred as account_model;
+// ignore: unused_import
+import '../models/activity_item.dart' deferred as activity_model;
+import '../screens/settings_screen.dart' deferred as settings;
+import 'package:Glorious/screens/edit_profile_screen.dart'
+    deferred as edit_profile;
+import 'package:Glorious/screens/notification_screen.dart'
+    deferred as notifications;
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -16,9 +20,10 @@ class AccountScreen extends StatefulWidget {
 class _AccountScreenState extends State<AccountScreen>
     with TickerProviderStateMixin {
   bool _isLoading = true;
-  Account? _account;
+  dynamic _account; // Changed from Account? to dynamic
   String? _errorMessage;
-  List<ActivityItem> _recentActivity = [];
+  List<dynamic> _recentActivity =
+      []; // Changed from List<ActivityItem> to List<dynamic>
   bool _activityLoading = true;
 
   late AnimationController _fadeController;
@@ -34,7 +39,21 @@ class _AccountScreenState extends State<AccountScreen>
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
     );
-    _fetchAccountDetails();
+    _loadDeferredLibraries();
+  }
+
+  Future<void> _loadDeferredLibraries() async {
+    try {
+      await account_model.loadLibrary();
+      await activity_model.loadLibrary();
+      _fetchAccountDetails();
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = 'Failed to load required resources: $e';
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -85,12 +104,14 @@ class _AccountScreenState extends State<AccountScreen>
     }
   }
 
-  void _navigateToSettings() {
+  Future<void> _navigateToSettings() async {
+    await settings.loadLibrary();
+    if (!mounted) return;
     Navigator.push(
       context,
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
-            const SettingsScreen(),
+            settings.SettingsScreen(),
         transitionDuration: const Duration(milliseconds: 300),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return SlideTransition(
@@ -177,7 +198,7 @@ class _AccountScreenState extends State<AccountScreen>
                     _isLoading = true;
                     _errorMessage = null;
                   });
-                  _fetchAccountDetails();
+                  _loadDeferredLibraries();
                 },
                 child: const Text('Retry'),
               ),
@@ -269,7 +290,6 @@ class _AccountScreenState extends State<AccountScreen>
                                 fontWeight: FontWeight.bold,
                               ),
                     ),
-                    
                     const SizedBox(height: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -447,25 +467,33 @@ class _AccountScreenState extends State<AccountScreen>
                           context,
                           'Edit Profile',
                           Icons.edit,
-                          () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  EditProfileScreen(),
-                            ),
-                          ),
+                          () async {
+                            await edit_profile.loadLibrary();
+                            if (!mounted) return;
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    edit_profile.EditProfileScreen(),
+                              ),
+                            );
+                          },
                         ),
                         _buildQuickActionCard(
                           context,
                           'Notifications',
                           Icons.notifications,
-                          () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const NotificationScreen(),
-                            ),
-                          ),
+                          () async {
+                            await notifications.loadLibrary();
+                            if (!mounted) return;
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    notifications.NotificationScreen(),
+                              ),
+                            );
+                          },
                         ),
                         _buildQuickActionCard(
                           context,
@@ -536,7 +564,7 @@ class _AccountScreenState extends State<AccountScreen>
     );
   }
 
-  Widget _buildActivityItem(BuildContext context, ActivityItem activity) {
+  Widget _buildActivityItem(BuildContext context, dynamic activity) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -648,11 +676,11 @@ class _AccountScreenState extends State<AccountScreen>
         return DateTime.parse(dateInput);
       } catch (e) {
         print('Error parsing date: $dateInput - $e');
-        return DateTime.now(); // Fallback to current date
+        return DateTime.now();
       }
     } else {
       print('Unexpected date type: ${dateInput.runtimeType}');
-      return DateTime.now(); // Fallback to current date
+      return DateTime.now();
     }
   }
 
@@ -691,40 +719,38 @@ class _AccountScreenState extends State<AccountScreen>
     }
   }
 
-  IconData _getActivityIcon(ActivityType type) {
-    switch (type) {
-      case ActivityType.noteCreated:
+  IconData _getActivityIcon(dynamic type) {
+    // Use string comparison since we can't directly reference the enum
+    final typeStr = type.toString().split('.').last;
+    switch (typeStr) {
+      case 'noteCreated':
         return Icons.note_add;
-      case ActivityType.postCreated:
+      case 'postCreated':
         return Icons.post_add;
-      case ActivityType.postLiked:
+      case 'postLiked':
         return Icons.favorite;
-      case ActivityType.friendAdded:
+      case 'friendAdded':
         return Icons.person_add;
+      default:
+        return Icons.event;
     }
   }
 
-  Color _getActivityColor(ActivityType type) {
-    switch (type) {
-      case ActivityType.noteCreated:
+  Color _getActivityColor(dynamic type) {
+    final typeStr = type.toString().split('.').last;
+    switch (typeStr) {
+      case 'noteCreated':
         return Theme.of(context).colorScheme.secondary;
-      case ActivityType.postCreated:
+      case 'postCreated':
         return Theme.of(context).colorScheme.primary;
-      case ActivityType.postLiked:
+      case 'postLiked':
         return Colors.red;
-      case ActivityType.friendAdded:
+      case 'friendAdded':
         return Theme.of(context).colorScheme.tertiary;
+      default:
+        return Theme.of(context).colorScheme.primary;
     }
   }
-
-//   void _editProfile() {
-//     ScaffoldMessenger.of(context).showSnackBar(
-//       const SnackBar(
-//         content: Text('Edit profile feature coming soon!'),
-//         behavior: SnackBarBehavior.floating,
-//       ),
-//     );
-//   }
 
   void _privacySettings() {
     ScaffoldMessenger.of(context).showSnackBar(

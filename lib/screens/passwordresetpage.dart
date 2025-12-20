@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import "package:Follower/services/api_service.dart";
+import "package:Glorious/services/api_service.dart";
 
 class RequestOtpScreen extends StatefulWidget {
   const RequestOtpScreen({super.key});

@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:Follower/services/api_service.dart';
+import 'package:Glorious/services/api_service.dart';
 
 
 class CreatePostScreen extends StatefulWidget {

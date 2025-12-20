@@ -1,4 +1,4 @@
-import 'package:Follower/services/api_service.dart';
+import 'package:Glorious/services/api_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:shared_preferences/shared_preferences.dart';

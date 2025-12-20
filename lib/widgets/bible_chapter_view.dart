@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:Follower/models/bible_verse.dart';
+import 'package:Glorious/models/bible_verse.dart';
 
 class BibleChapterView extends StatelessWidget {
   final BibleChapter chapter;

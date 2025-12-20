@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:Follower/models/note.dart';
-import 'package:Follower/services/api_service.dart';
-import 'package:Follower/screens/note_detail_screen.dart';
-import 'package:Follower/widgets/note_card.dart';
+// ignore: unused_import
+import 'package:Glorious/models/note.dart' deferred as note_model;
+import 'package:Glorious/services/api_service.dart';
+import 'package:Glorious/screens/note_detail_screen.dart'
+    deferred as note_detail;
+import 'package:Glorious/widgets/note_card.dart' deferred as note_widget;
 
 class NotesScreen extends StatefulWidget {
   const NotesScreen({super.key});
@@ -11,12 +13,13 @@ class NotesScreen extends StatefulWidget {
   State<NotesScreen> createState() => _NotesScreenState();
 }
 
-class _NotesScreenState extends State<NotesScreen> with TickerProviderStateMixin {
+class _NotesScreenState extends State<NotesScreen>
+    with TickerProviderStateMixin {
   final ApiService _apiService = ApiService();
-  List<Note> _notes = [];
-  List<Note> _filteredNotes = [];
+  List<dynamic> _notes = []; // Changed from List<Note>
+  List<dynamic> _filteredNotes = []; // Changed from List<Note>
   bool _isLoading = true;
-//   String _searchQuery = '';
+  bool _librariesLoaded = false;
   late AnimationController _slideController;
   late Animation<Offset> _slideAnimation;
 
@@ -34,7 +37,7 @@ class _NotesScreenState extends State<NotesScreen> with TickerProviderStateMixin
       parent: _slideController,
       curve: Curves.easeOutCubic,
     ));
-    _loadNotes();
+    _loadDeferredLibraries();
   }
 
   @override
@@ -43,7 +46,25 @@ class _NotesScreenState extends State<NotesScreen> with TickerProviderStateMixin
     super.dispose();
   }
 
+  Future<void> _loadDeferredLibraries() async {
+    try {
+      await Future.wait([
+        note_model.loadLibrary(),
+        note_detail.loadLibrary(),
+        note_widget.loadLibrary(),
+      ]);
+      setState(() => _librariesLoaded = true);
+      _loadNotes();
+    } catch (e) {
+      if (!mounted) return;
+      _showErrorSnackBar('Failed to load required resources');
+      setState(() => _isLoading = false);
+    }
+  }
+
   Future<void> _loadNotes() async {
+    if (!_librariesLoaded) return;
+
     setState(() => _isLoading = true);
     try {
       final userId = await _apiService.getUserId();
@@ -53,30 +74,26 @@ class _NotesScreenState extends State<NotesScreen> with TickerProviderStateMixin
         return;
       }
       final notes = await _apiService.getUserNotes();
+
+      if (!mounted) return;
+
       setState(() {
         _notes = notes;
         _filteredNotes = notes;
       });
       _slideController.forward();
     } catch (e) {
+      if (!mounted) return;
       _showErrorSnackBar('Failed to load notes');
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
-//   void _filterNotes(String query) {
-//     setState(() {
-//       _searchQuery = query;
-//       _filteredNotes = _notes.where((note) {
-//         return note.title.toLowerCase().contains(query.toLowerCase()) ||
-//             note.content.toLowerCase().contains(query.toLowerCase()) ||
-//             note.tags.any((tag) => tag.toLowerCase().contains(query.toLowerCase()));
-//       }).toList();
-//     });
-//   }
-
   void _showErrorSnackBar(String message) {
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
@@ -87,11 +104,14 @@ class _NotesScreenState extends State<NotesScreen> with TickerProviderStateMixin
     );
   }
 
-  void _createNote() {
-    Navigator.push(
+  Future<void> _createNote() async {
+    if (!_librariesLoaded) return;
+
+    await Navigator.push(
       context,
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => const NoteDetailScreen(),
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            note_detail.NoteDetailScreen(),
         transitionDuration: const Duration(milliseconds: 300),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return SlideTransition(
@@ -103,14 +123,18 @@ class _NotesScreenState extends State<NotesScreen> with TickerProviderStateMixin
           );
         },
       ),
-    ).then((_) => _loadNotes());
+    );
+    _loadNotes();
   }
 
-  void _openNote(Note note) {
-    Navigator.push(
+  Future<void> _openNote(dynamic note) async {
+    if (!_librariesLoaded) return;
+
+    await Navigator.push(
       context,
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => NoteDetailScreen(note: note),
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            note_detail.NoteDetailScreen(note: note),
         transitionDuration: const Duration(milliseconds: 300),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return SlideTransition(
@@ -122,7 +146,20 @@ class _NotesScreenState extends State<NotesScreen> with TickerProviderStateMixin
           );
         },
       ),
-    ).then((_) => _loadNotes());
+    );
+    _loadNotes();
+  }
+
+  void _showSearch() {
+    if (!_librariesLoaded) return;
+
+    showSearch(
+      context: context,
+      delegate: NoteSearchDelegate(
+        notes: _notes,
+        onNoteSelected: _openNote,
+      ),
+    );
   }
 
   @override
@@ -135,7 +172,8 @@ class _NotesScreenState extends State<NotesScreen> with TickerProviderStateMixin
             SizedBox(width: 8),
             Text(
               'My Notes',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -143,31 +181,36 @@ class _NotesScreenState extends State<NotesScreen> with TickerProviderStateMixin
         actions: [
           IconButton(
             icon: const Icon(Icons.search, color: Colors.white),
-            onPressed: () {
-              showSearch(
-                context: context,
-                delegate: NoteSearchDelegate(
-                  notes: _notes,
-                  onNoteSelected: _openNote,
-                ),
-              );
-            },
+            onPressed: _librariesLoaded ? _showSearch : null,
           ),
         ],
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _notes.isEmpty
-              ? _buildEmptyState()
-              : SlideTransition(
-                  position: _slideAnimation,
-                  child: _buildNotesList(),
-                ),
+      body: !_librariesLoaded
+          ? const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('Loading notes...'),
+                ],
+              ),
+            )
+          : _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : _notes.isEmpty
+                  ? _buildEmptyState()
+                  : SlideTransition(
+                      position: _slideAnimation,
+                      child: _buildNotesList(),
+                    ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _createNote,
+        onPressed: _librariesLoaded ? _createNote : null,
         icon: const Icon(Icons.add),
         label: const Text('New Note'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: _librariesLoaded
+            ? Theme.of(context).colorScheme.primary
+            : Theme.of(context).colorScheme.primary.withOpacity(0.5),
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
       ),
     );
@@ -187,15 +230,15 @@ class _NotesScreenState extends State<NotesScreen> with TickerProviderStateMixin
           Text(
             'No notes yet',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              color: Theme.of(context).colorScheme.outline,
-            ),
+                  color: Theme.of(context).colorScheme.outline,
+                ),
           ),
           const SizedBox(height: 8),
           Text(
             'Create your first spiritual note',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: Theme.of(context).colorScheme.outline,
-            ),
+                  color: Theme.of(context).colorScheme.outline,
+                ),
           ),
           const SizedBox(height: 24),
           ElevatedButton.icon(
@@ -224,7 +267,7 @@ class _NotesScreenState extends State<NotesScreen> with TickerProviderStateMixin
           final note = _filteredNotes[index];
           return AnimatedContainer(
             duration: Duration(milliseconds: 100 * index),
-            child: NoteCard(
+            child: note_widget.NoteCard(
               note: note,
               onTap: () => _openNote(note),
               onDelete: () => _deleteNote(note),
@@ -235,7 +278,7 @@ class _NotesScreenState extends State<NotesScreen> with TickerProviderStateMixin
     );
   }
 
-  Future<void> _deleteNote(Note note) async {
+  Future<void> _deleteNote(dynamic note) async {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -276,9 +319,9 @@ class _NotesScreenState extends State<NotesScreen> with TickerProviderStateMixin
   }
 }
 
-class NoteSearchDelegate extends SearchDelegate<Note?> {
-  final List<Note> notes;
-  final Function(Note) onNoteSelected;
+class NoteSearchDelegate extends SearchDelegate<dynamic> {
+  final List<dynamic> notes;
+  final Function(dynamic) onNoteSelected;
 
   NoteSearchDelegate({required this.notes, required this.onNoteSelected});
 
@@ -314,20 +357,64 @@ class NoteSearchDelegate extends SearchDelegate<Note?> {
     final filteredNotes = notes.where((note) {
       return note.title.toLowerCase().contains(query.toLowerCase()) ||
           note.content.toLowerCase().contains(query.toLowerCase()) ||
-          note.tags.any((tag) => tag.toLowerCase().contains(query.toLowerCase()));
+          (note.tags as List)
+              .any((tag) => tag.toLowerCase().contains(query.toLowerCase()));
     }).toList();
+
+    if (filteredNotes.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.search_off,
+              size: 64,
+              color: Colors.grey[400],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'No notes found',
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.grey[600],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Try searching with different keywords',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[500],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
 
     return ListView.builder(
       itemCount: filteredNotes.length,
       itemBuilder: (context, index) {
         final note = filteredNotes[index];
         return ListTile(
-          title: Text(note.title),
+          leading: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.blue.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Icon(Icons.note, color: Colors.blue),
+          ),
+          title: Text(
+            note.title,
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
           subtitle: Text(
             note.content,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
+          trailing: const Icon(Icons.chevron_right),
           onTap: () {
             close(context, note);
             onNoteSelected(note);
