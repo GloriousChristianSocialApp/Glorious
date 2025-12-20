@@ -21,7 +21,7 @@ class ApiResponse<T> {
 }
 
 class ApiService {
-  static const String baseUrl = 'https://glorify-server.onrender.com';
+  static const String baseUrl = 'https://glorious-server.onrender.com';
 
 //   Future<String?> _getToken() async {
 //     final prefs = await SharedPreferences.getInstance();
