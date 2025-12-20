@@ -1,0 +1,1 @@
+Contains server API endpoints to be exposed made using the flask blueprint method
