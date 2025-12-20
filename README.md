@@ -14,8 +14,9 @@ The goal of **Glorious** is to use modern technology to facilitate ancient spiri
 **Contributing:**
 We welcome contributions! If you'd like to help improve Glorious, please fork the repo, create a feature branch, and submit a pull request.
 
-NOTE: the frontend is in the branch frontend
-NOTE: the server is in the branch server
+NOTE: The frontend is in the branch frontend
+NOTE: The server is in the branch server
+NOTE: We use github pages hosted fom branch /gh-pages made automatically from a code push to the frontend branch
 
 ---
 
