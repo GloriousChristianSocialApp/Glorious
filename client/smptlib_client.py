@@ -49,5 +49,3 @@ def send_email(targrt_username ,recipient, otp):
         print(f"Error: {e}")
     finally:
         server.quit()
-
-send_email("kenkaroki92@gmail.com" ,"6D7r80")
