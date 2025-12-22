@@ -9,26 +9,26 @@ class RequestOtpScreen extends StatefulWidget {
 }
 
 class _RequestOtpScreenState extends State<RequestOtpScreen> {
-  final TextEditingController _userIdController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
   bool _loading = false;
 
   void _sendOtp() async {
     // Validate input
-    if (_userIdController.text.trim().isEmpty) {
-      _showError('Please enter your User ID');
+    if (_usernameController.text.trim().isEmpty) {
+      _showError('Please enter your UserName');
       return;
     }
 
     setState(() => _loading = true);
     try {
       final email =
-          await ApiService().requestOtp(_userIdController.text.trim());
+          await ApiService().requestOtp(_usernameController.text.trim());
       if (mounted) {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (_) => VerifyOtpScreen(
-              userId: _userIdController.text.trim(),
+              userId: _usernameController.text.trim(),
               email: email!,
             ),
           ),
@@ -55,7 +55,7 @@ class _RequestOtpScreenState extends State<RequestOtpScreen> {
 
   @override
   void dispose() {
-    _userIdController.dispose();
+    _usernameController.dispose();
     super.dispose();
   }
 
@@ -93,7 +93,7 @@ class _RequestOtpScreenState extends State<RequestOtpScreen> {
               ),
               const SizedBox(height: 8),
               const Text(
-                'Enter your User ID to receive a verification code',
+                'Enter your Username to receive a verification code',
                 style: TextStyle(
                   color: Colors.white70,
                   fontSize: 14,
@@ -102,10 +102,10 @@ class _RequestOtpScreenState extends State<RequestOtpScreen> {
               ),
               const SizedBox(height: 32),
               TextField(
-                controller: _userIdController,
+                controller: _usernameController,
                 enabled: !_loading,
                 decoration: InputDecoration(
-                  hintText: 'Enter User ID',
+                  hintText: 'Enter Username',
                   prefixIcon: const Icon(Icons.person),
                   fillColor: Colors.white,
                   filled: true,

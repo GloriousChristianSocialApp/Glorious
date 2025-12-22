@@ -1,3 +1,4 @@
+import 'package:Glorious/screens/main_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:Glorious/services/api_service.dart';
 import 'package:Glorious/screens/passwordresetpage.dart' deferred as reset_page;
@@ -288,6 +289,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         if (result.statusCode == 200) {
                           setState(() => errorMessage = null);
+                          Navigator.push(
+                              context, MaterialPageRoute(builder: (_) => MainNavigation()));
                           // Navigate to home
                         } else {
                           setState(() => errorMessage = result.message);
@@ -501,7 +504,10 @@ class _SignupScreenState extends State<SignupScreen> {
 
                         if (result.statusCode == 201) {
                           setState(() => errorMessage = null);
-                          // optionally navigate to login
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => MainNavigation()));
                         } else {
                           setState(() => errorMessage = result.message);
                         }

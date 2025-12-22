@@ -11,7 +11,6 @@ import 'package:Glorious/models/friend_request.dart';
 import 'package:Glorious/models/activity_item.dart'; // Import ActivityItem
 import 'package:Glorious/models/notification.dart';
 
-
 class ApiResponse<T> {
   final int statusCode;
   final T? data;
@@ -126,7 +125,8 @@ class ApiService {
 
   // Authentication endpoints
 
-  Future<ApiResponse<Map<String, dynamic>>> login(String username, String password) async {
+  Future<ApiResponse<Map<String, dynamic>>> login(
+      String username, String password) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/login'),
@@ -142,9 +142,12 @@ class ApiService {
         await prefs.setString('user_id', body['user_id']);
         await prefs.setString('user_name', body['username']);
         await prefs.setString('user_profile_image', body['profileImage']);
-        return ApiResponse(statusCode: 200, data: body, message: 'Login successful');
+        return ApiResponse(
+            statusCode: 200, data: body, message: 'Login successful');
       } else {
-        return ApiResponse(statusCode: response.statusCode, message: body['message'] ?? 'Login failed');
+        return ApiResponse(
+            statusCode: response.statusCode,
+            message: body['message'] ?? 'Login failed');
       }
     } catch (e) {
       print('Error during login: $e');
@@ -152,19 +155,31 @@ class ApiService {
     }
   }
 
-  Future<ApiResponse<String>> register(String username, String password, String email) async {
+  Future<ApiResponse<String>> register(
+      String username, String password, String email) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/register'),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({'username': username, 'password': password, 'email': email}),
+        body: json.encode(
+            {'username': username, 'password': password, 'email': email}),
       );
-
-      final body = json.decode(response.body);
-      return ApiResponse(
-        statusCode: response.statusCode,
-        message: body['message'] ?? 'Unknown error',
-      );
+       final body = json.decode(response.body);
+      
+      if (response.statusCode == 201) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('user_token', body['token']);
+        await prefs.setString('user_id', body['user_id']);
+        await prefs.setString('user_name', body['username']);
+        await prefs.setString('user_profile_image', body['profileImage']);
+        return ApiResponse(
+            statusCode: 201, data: body, message: 'Login successful');
+      } else {
+       return ApiResponse(
+          statusCode: response.statusCode,
+          message: body['message'] ?? 'Unknown error',
+        );
+      }
     } catch (e) {
       print('Error during registration: $e');
       return ApiResponse(statusCode: 500, message: 'Error during registration');
@@ -172,11 +187,11 @@ class ApiService {
   }
 
 // Request OTP
-  Future<String?> requestOtp(String userId) async {
+  Future<String?> requestOtp(String username) async {
     final response = await http.post(
       Uri.parse('$baseUrl/get_code'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'user_id': userId}),
+      body: jsonEncode({'username': username}),
     );
 
     if (response.statusCode == 200) {
@@ -204,7 +219,8 @@ class ApiService {
   }
 
   // Set New Password
-  Future<void> setNewPassword(String userId, String token, String newPassword) async {
+  Future<void> setNewPassword(
+      String userId, String token, String newPassword) async {
     final response = await http.post(
       Uri.parse('$baseUrl/new_password/$userId/$token'),
       headers: {'Content-Type': 'application/json'},
@@ -215,7 +231,6 @@ class ApiService {
       throw Exception(jsonDecode(response.body)['message']);
     }
   }
-
 
   // Notes endpoints
   Future<List<Note>> getUserNotes() async {
