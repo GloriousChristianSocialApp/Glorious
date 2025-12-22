@@ -29,15 +29,15 @@ OTP_collection.create_index(
 @passreset_bp.route('/get_code', methods=['POST'])
 def get_code():
     data = request.get_json()
-    user_id = data.get('user_id')
+    username = data.get('username')
 
-    if not user_id:
-        return jsonify({"message": "user_id required"}), 400
+    if not username:
+        return jsonify({"message": "username required"}), 400
 
-    user_data = users_collection.find_one({"_id": ObjectId(user_id)})
+    user_data = users_collection.find_one({"username": username})
     if not user_data:
         return jsonify({"message": "User not found"}), 404
-
+    user_id = users_collection["username"]
     # Generate OTP
     chars = string.ascii_letters + string.digits
     otp = ''.join(random.choice(chars) for _ in range(6))

@@ -92,9 +92,20 @@ def register_user():
         return jsonify({'message': 'Username already exists'}), 409
 
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-    users_collection.insert_one({'username': username, 'email':email , 'password': hashed_password, 'profileImage': 'https://res.cloudinary.com/dkj0tdmls/image/upload/v1766263629/default_pfp.jpg'})
+    users_collection.insert_one({'username': username, 'email':email , 'password': hashed_password, 'profileImage': default_profile_picture})
+    token = jwt.encode({
+            'username': username,
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)
+        }, SECRET_KEY, algorithm='HS256')
+    #get new user info
+    user = users_collection.find_one({'username': username})
 
-    return jsonify({'message': 'User registered successfully'}), 201
+    return jsonify({
+            'token': token,
+            'user_id': str(user['_id']),
+            'username': user['username'],
+            'profileImage':  default_profile_picture
+        }), 200, 201
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
