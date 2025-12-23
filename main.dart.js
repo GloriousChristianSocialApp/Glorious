@@ -44202,7 +44202,7 @@ var $async$B6=A.u(function(b,c){if(b===1){o.push(c)
 s=p}while(true)switch(s){case 0:p=4
 m=t.N
 s=7
-return A.r(A.ke(A.cg("https://glorious-server.onrender.com/posts/comments/"+a,0,null),A.V(["Content-Type","application/json"],m,m)),$async$B6)
+return A.r(A.ke(A.cg("https://glorious-server.onrender.com/posts/get-comments-for/"+a,0,null),A.V(["Content-Type","application/json"],m,m)),$async$B6)
 case 7:n=c
 if(n.b===200){m=n
 m=B.U.bq(0,A.fg(A.ff(m.e)).bq(0,m.w))
