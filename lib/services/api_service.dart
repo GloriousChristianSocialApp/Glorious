@@ -142,6 +142,7 @@ class ApiService {
         await prefs.setString('user_id', body['user_id']);
         await prefs.setString('user_name', body['username']);
         await prefs.setString('user_profile_image', body['profileImage']);
+        await prefs.setBool('_isloggedin', true);
         return ApiResponse(
             statusCode: 200, data: body, message: 'Login successful');
       } else {
@@ -164,18 +165,19 @@ class ApiService {
         body: json.encode(
             {'username': username, 'password': password, 'email': email}),
       );
-       final body = json.decode(response.body);
-      
+      final body = json.decode(response.body);
+
       if (response.statusCode == 201) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('user_token', body['token']);
         await prefs.setString('user_id', body['user_id']);
         await prefs.setString('user_name', body['username']);
         await prefs.setString('user_profile_image', body['profileImage']);
+        await prefs.setBool('_isloggedin', true);
         return ApiResponse(
             statusCode: 201, data: body, message: 'Login successful');
       } else {
-       return ApiResponse(
+        return ApiResponse(
           statusCode: response.statusCode,
           message: body['message'] ?? 'Unknown error',
         );
@@ -383,6 +385,43 @@ class ApiService {
 
     if (response.statusCode != 201) {
       throw Exception('Failed to create post');
+    }
+  }
+
+  Future<int> addComment(String postId, String commentMessage) async {
+    try {
+      final commentorUserId = getUserId();
+      final response = await http.post(
+        Uri.parse("$baseUrl/posts/comment/$postId"),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          "commentor_id": commentorUserId,
+          "comment_message": commentMessage,
+        }),
+      );
+
+      return response.statusCode;
+    } catch (e) {
+      return 707; // network / unexpected error
+    }
+  }
+
+Future<Map<String, dynamic>?> getPostComments(String postId) async {
+    try {
+      final response = await http.get(
+        Uri.parse("$baseUrl/posts/comments/$postId"),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
     }
   }
 

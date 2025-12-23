@@ -63,13 +63,6 @@ class FriendCard extends StatelessWidget {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    IconButton(
-                      onPressed: onMessage,
-                      icon: Icon(
-                        Icons.chat_bubble_outline,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
                     PopupMenuButton<String>(
                       onSelected: (value) {
                         if (value == 'remove') {

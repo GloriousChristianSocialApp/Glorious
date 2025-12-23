@@ -8,8 +8,8 @@ class Post {
   final String? mediaType; // image | video
   final DateTime createdAt;
   final int likesCount;
+  final int dislikescount;
   final int commentsCount;
-  final bool isLiked;
   final String? verseReference;
 
   Post({
@@ -21,9 +21,9 @@ class Post {
     this.mediaUrl,
     this.mediaType,
     required this.createdAt,
-    this.likesCount = 0,
-    this.commentsCount = 0,
-    this.isLiked = false,
+    required this.likesCount,
+    required this.dislikescount,
+    required this.commentsCount,
     this.verseReference,
   });
 
@@ -38,8 +38,8 @@ class Post {
       mediaType: json['mediaType'],
       createdAt: DateTime.parse(json['createdAt']),
       likesCount: json['likesCount'] ?? 0,
+      dislikescount: json['dislikesCount'] ?? 0,
       commentsCount: json['commentsCount'] ?? 0,
-      isLiked: json['isLiked'] ?? false,
       verseReference: json['verseReference'],
     );
   }
@@ -68,6 +68,9 @@ class Post {
       'mediaType': mediaType,
       'createdAt': createdAt.toIso8601String(),
       'verseReference': verseReference,
+      'likesCount':likesCount,
+      'dislikescount' : dislikescount,
+      'commentsCount':commentsCount,
     };
   }
 }

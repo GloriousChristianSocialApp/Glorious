@@ -45,12 +45,16 @@ class _ChurchAppState extends State<ChurchApp> {
 
     // SharedPreferences (IndexedDB on web – slow if awaited in main)
     final prefs = await SharedPreferences.getInstance();
-    final loggedIn = prefs.getBool('isLoggedIn') ?? false;
+    final loggedIn = prefs.getBool('_isloggedin') ?? false;
 
     if (!mounted) return;
 
     setState(() {
-      _isLoggedIn = loggedIn;
+      if (loggedIn == null) {
+        _isLoggedIn = false;
+      } else {
+        _isLoggedIn = loggedIn;
+      }
     });
   }
 
@@ -88,4 +92,3 @@ class SplashScreen extends StatelessWidget {
     );
   }
 }
-

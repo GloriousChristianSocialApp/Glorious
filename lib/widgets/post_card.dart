@@ -1,6 +1,7 @@
-    import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import '../../models/post.dart';
+import 'package:Glorious/screens/commentpage.dart';
 
 class PostCard extends StatelessWidget {
   final Post post;
@@ -35,6 +36,31 @@ class PostCard extends StatelessWidget {
             ),
           if (post.mediaType == 'video') VideoPlayerWidget(url: post.mediaUrl!),
           const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton.icon(
+                onPressed: () {},
+                label: Text("${post.likesCount}"),
+                icon: Icon(Icons.thumb_up),
+              ),
+              ElevatedButton.icon(
+                onPressed: () {},
+                label: Text("${post.dislikescount}"),
+                icon: Icon(Icons.thumb_down),
+              ),
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => Commentpage(PostId: "${post.id}")));
+                },
+                label: Text("${post.commentsCount}"),
+                icon: Icon(Icons.comment_sharp),
+              ),
+            ],
+          )
         ],
       ),
     );

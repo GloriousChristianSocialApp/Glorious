@@ -81,30 +81,24 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            _islogin
-                                ? "Don't have an account?"
-                                : "Already have an account?",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.white.withOpacity(0.9),
-                            ),
-                          ),
+                          
                           SizedBox(width: 8),
                           GestureDetector(
+                            child: Text(
+                              _islogin
+                                  ? "Don't have an account? Sign Up"
+                                  : "Already have an account? Log In",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.white.withOpacity(0.9),
+                              ),
+                            ),
                             onTap: () {
                               setState(() {
                                 _islogin = !_islogin;
                               });
                             },
-                            child: Text(
-                              _islogin ? "Sign Up" : "Log In",
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Color(0xFFE1BEE7),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                            
                           ),
                         ],
                       ),
@@ -175,13 +169,14 @@ class _LoginScreenState extends State<LoginScreen> {
             // Username Field
             TextField(
               controller: usernameController,
+               style: TextStyle(color: Colors.black),
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Color(0xFFF5F5F5),
                 prefixIcon:
                     Icon(Icons.person_outline, color: Color(0xFF6B1B9A)),
                 labelText: "Username",
-                labelStyle: TextStyle(color: Colors.grey[700]),
+                labelStyle: TextStyle(color: const Color.fromARGB(255, 0, 0, 0)),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide.none,
@@ -198,12 +193,15 @@ class _LoginScreenState extends State<LoginScreen> {
             TextField(
               controller: passwordController,
               obscureText: _obscureText,
+              style: TextStyle(
+                color: Colors.black
+              ),
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Color(0xFFF5F5F5),
                 prefixIcon: Icon(Icons.lock_outline, color: Color(0xFF6B1B9A)),
                 labelText: "Password",
-                labelStyle: TextStyle(color: Colors.grey[700]),
+                labelStyle: TextStyle(color: const Color.fromARGB(255, 0, 0, 0)),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide.none,
@@ -386,13 +384,14 @@ class _SignupScreenState extends State<SignupScreen> {
             TextField(
               controller: emailController,
               keyboardType: TextInputType.emailAddress,
+               style: TextStyle(color: Colors.black),
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Color(0xFFF5F5F5),
                 prefixIcon:
                     Icon(Icons.email_outlined, color: Color(0xFF6B1B9A)),
                 labelText: "Email",
-                labelStyle: TextStyle(color: Colors.grey[700]),
+                labelStyle: TextStyle(color: const Color.fromARGB(255, 0, 0, 0)),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide.none,
@@ -408,13 +407,14 @@ class _SignupScreenState extends State<SignupScreen> {
             // Username Field
             TextField(
               controller: usernameController,
+               style: TextStyle(color: Colors.black),
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Color(0xFFF5F5F5),
                 prefixIcon:
                     Icon(Icons.person_outline, color: Color(0xFF6B1B9A)),
                 labelText: "Username",
-                labelStyle: TextStyle(color: Colors.grey[700]),
+                labelStyle: TextStyle(color: const Color.fromARGB(255, 0, 0, 0)),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide.none,
@@ -431,12 +431,13 @@ class _SignupScreenState extends State<SignupScreen> {
             TextField(
               controller: passwordController,
               obscureText: _obscureText,
+               style: TextStyle(color: Colors.black),
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Color(0xFFF5F5F5),
                 prefixIcon: Icon(Icons.lock_outline, color: Color(0xFF6B1B9A)),
                 labelText: "Password",
-                labelStyle: TextStyle(color: Colors.grey[700]),
+                labelStyle: TextStyle(color: const Color.fromARGB(255, 0, 0, 0)),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide.none,
