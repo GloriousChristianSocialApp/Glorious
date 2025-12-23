@@ -43,7 +43,15 @@ def _find_user_by_id(uid):
     except Exception:
         return users_collection.find_one({'_id': uid})
 # Configure Cloudinary
-config_cloudinary()
+cloud_name=CLOUD_NAME = os.environ.get("CLOUDINARY_CLOUD_NAME")
+api_key=API_KEY = os.environ.get("CLOUDINARY_API_KEY")
+api_secret=API_SECRET = os.environ.get("CLOUDINARY_API_SECRET")
+cloudinary.config( 
+        cloud_name = cloud_name, 
+        api_key = api_key, 
+        api_secret = api_secret,
+        secure=True
+)
 
 feed_bp = Blueprint('feed_bp', __name__)
 
