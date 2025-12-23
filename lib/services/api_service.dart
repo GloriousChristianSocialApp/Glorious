@@ -409,7 +409,7 @@ class ApiService {
 Future<Map<String, dynamic>?> getPostComments(String postId) async {
     try {
       final response = await http.get(
-        Uri.parse("$baseUrl/posts/comments/$postId"),
+        Uri.parse("$baseUrl/posts/get-comments-for/$postId"),
         headers: {
           'Content-Type': 'application/json',
         },
