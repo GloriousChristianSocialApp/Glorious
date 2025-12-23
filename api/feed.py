@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from datetime import datetime
 from bson.objectid import ObjectId
 from client.mongo_client import db , users_collection , friend_requests_collection
+from client.cloudinary_client import config_cloudinary
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
@@ -42,12 +43,7 @@ def _find_user_by_id(uid):
     except Exception:
         return users_collection.find_one({'_id': uid})
 # Configure Cloudinary
-cloudinary.config( 
-    cloud_name = "do6w3vaa8", 
-    api_key = "319295354757898", 
-    api_secret = "x7_CYEwzbvLxjfIxwn17KH_2Lz8", # Click 'View API Keys' above to copy your API secret
-    secure=True
-)
+config_cloudinary()
 
 feed_bp = Blueprint('feed_bp', __name__)
 
@@ -70,8 +66,8 @@ def post_to_json(post):
         "mediaUrl": media_url,
         "createdAt": created_at_str,
         "likesCount": post.get("likesCount", 0),
+        "dislikesCount": post.get("dislikesCount" , 0),
         "commentsCount": post.get("commentsCount", 0),
-        "isLiked": post.get("isLiked", False),
         "verseReference": post.get("verseReference"),
     }
 
@@ -136,8 +132,8 @@ def create_post():
         "mediaUrl": media_url,
         "createdAt": datetime.utcnow(),
         "likesCount": 0,
+        "dislikesCount":0,
         "commentsCount": 0,
-        "isLiked": False,
         "verseReference": data.get("verseReference"),
     }
 
@@ -145,44 +141,13 @@ def create_post():
     post_doc["_id"] = result.inserted_id
 
     return jsonify(post_to_json(post_doc)), 201
+
 @feed_bp.route("/posts/<user_id>", methods=["GET"])
 def get_user_posts(user_id):
     posts = list(db.posts.find({"userId": user_id}).sort("createdAt", -1))
     posts_json = [post_to_json(post) for post in posts]
     return jsonify(posts_json)
 
-@feed_bp.route("/posts/<post_id>/like", methods=["POST"])
-def like_post(post_id):
-    user_id = request.json.get("userId")
-    post = db.posts.find_one({"_id": ObjectId(post_id)})
-    if not post:
-        return jsonify({"error": "Post not found"}), 404
-    liked = db.likes.find_one({"postId": post_id, "userId": user_id})
-    if liked:
-        db.likes.delete_one({"postId": post_id, "userId": user_id})
-        db.posts.update_one({"_id": ObjectId(post_id)}, {"$inc": {"likesCount": -1}})
-        db.posts.update_one({"_id": ObjectId(post_id)}, {"$set": {"isLiked": False}})
-    else:
-        db.likes.insert_one({"postId": post_id, "userId": user_id, "createdAt": datetime.utcnow()})
-        db.posts.update_one({"_id": ObjectId(post_id)}, {"$inc": {"likesCount": 1}})
-        db.posts.update_one({"_id": ObjectId(post_id)}, {"$set": {"isLiked": True}})
-    post = db.posts.find_one({"_id": ObjectId(post_id)})
-    return jsonify(post_to_json(post))
-
-@feed_bp.route("/posts/<post_id>/comment", methods=["POST"])
-def comment_post(post_id):
-    data = request.json
-    comment_doc = {
-        "postId": post_id,
-        "userId": data["userId"],
-        "userName": data.get("userName", ""),
-        "userProfileImage": data.get("userProfileImage", ""),
-        "content": data["content"],
-        "createdAt": datetime.utcnow(),
-    }
-    db.comments.insert_one(comment_doc)
-    db.posts.update_one({"_id": ObjectId(post_id)}, {"$inc": {"commentsCount": 1}})
-    return jsonify({"success": True, "comment": comment_doc})
 
 @feed_bp.route("/posts/<post_id>", methods=["DELETE"])
 def delete_post(post_id):
@@ -197,3 +162,56 @@ def get_all_posts():
     posts_json = [post_to_json(post) for post in posts]
     return jsonify(posts_json)
 
+from client.mongo_client import comments_collection
+
+@feed_bp.route("posts/comment/<post_id>", methods=["POST"])
+def add_comment(post_id):
+    data = request.get_json()
+
+    comment = {
+        "commentor_id": ObjectId(data["commentor_id"]),
+        "message": data["comment_message"],
+        "created_at": datetime.utcnow(),
+        "likes": 0,
+        "dislikes": 0,
+        "recomments": 0
+    }
+
+    result = comments_collection.update_one(
+        {"post_id": ObjectId(post_id)},
+        {"$push": {"comments": comment}}
+    )
+    previouscommentscount = db.posts.find_one({"_id": ObjectId(post_id)})['commentsCount']
+
+    db.posts.update_one(
+        {'_id': ObjectId(post_id)},
+        {"$set":{"commentsCount" : (previouscommentscount + 1)}}
+    )
+
+    if result.matched_count == 0:
+        return jsonify({"error": "Post not found"}), 404
+
+    return jsonify({"message": "Comment added successfully"}), 201
+
+@feed_bp.route('/posts/get-comments-for/<post_id>', methods = ["GET"])
+def get_posts(post_id):
+    comments_cursor = comments_collection.find(
+    {"post_id": ObjectId(post_id)},
+    {"_id": 0}  # optional: hide Mongo _id
+    )
+    comments = []
+    for single_comment in comments_cursor:
+        user = users_collection.find_one(
+            {"_id": ObjectId(single_comment["commentor_id"])},
+            {"profile_pic": 1, "_id": 0}
+        )
+        single_comment["commentor_pfp"] = (
+            user.get("profile_pic")
+            if user else
+            "https://res.cloudinary.com/dkj0tdmls/image/upload/v1766263629/default_pfp.jpg"
+        )
+        comments.append(single_comment)
+
+        return jsonify({
+                "comments": comments
+            })
