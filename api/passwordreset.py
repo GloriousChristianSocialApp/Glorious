@@ -87,7 +87,8 @@ def get_code():
 
     return jsonify({
         "message": "OTP sent",
-        "user_id": str(user_id)
+        "user_id": str(user_id),
+        "email": user['email']
     }), 200
 
 
