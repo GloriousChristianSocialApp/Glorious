@@ -195,26 +195,41 @@ def add_comment(post_id):
 
 @feed_bp.route('/posts/get-comments-for/<post_id>', methods=["GET"])
 def get_posts(post_id):
-    comments_cursor = comments_collection.find(
-        {"post_id": ObjectId(post_id)},
-        {"_id": 0}
-    ).sort("created_at", -1)  # Optional: sort by newest first
-    
-    comments = []
-    
-    for single_comment in comments_cursor:
-        user = users_collection.find_one(
-            {"_id": single_comment["commentor_id"]},
-            {"profile_pic": 1, "_id": 0}
+    try:
+        # Validate ObjectId
+        if not ObjectId.is_valid(post_id):
+            return jsonify({"error": "Invalid post ID"}), 400
+        
+        comments_cursor = comments_collection.find(
+            {"post_id": ObjectId(post_id)},
+            {"_id": 0}
         )
         
-        single_comment["commentor_pfp"] = (
-            user.get("profile_pic")
-            if user and "profile_pic" in user
-            else "https://res.cloudinary.com/dkj0tdmls/image/upload/v1766263629/default_pfp.jpg"
-        )
+        comments = []
         
-        comments.append(single_comment)
+        for single_comment in comments_cursor:
+            # commentor_id is already an ObjectId, don't wrap it again
+            user = users_collection.find_one(
+                {"_id": single_comment["commentor_id"]},  # Remove ObjectId() wrapper
+                {"profile_pic": 1, "_id": 0}
+            )
+            
+            single_comment["commentor_pfp"] = (
+                user.get("profile_pic")
+                if user and "profile_pic" in user
+                else "https://res.cloudinary.com/dkj0tdmls/image/upload/v1766263629/default_pfp.jpg"
+            )
+            
+            # Convert ObjectIds to strings for JSON serialization
+            single_comment["post_id"] = str(single_comment["post_id"])
+            single_comment["commentor_id"] = str(single_comment["commentor_id"])
+            single_comment["created_at"] = single_comment["created_at"].isoformat()
+            
+            comments.append(single_comment)
+        
+        return jsonify({"comments": comments})
     
-    return jsonify({"comments": comments})
+    except Exception as e:
+        print(f"Error fetching comments: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
