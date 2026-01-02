@@ -171,7 +171,7 @@ def add_comment(post_id):
     comment = {
         "commentor_id": ObjectId(data["commentor_id"]),
         "message": data["comment_message"],
-        "created_at": datetime.utcnow(),
+        "created_at": datetime.now(),
         "likes": 0,
         "dislikes": 0,
         "recomments": 0
@@ -193,25 +193,30 @@ def add_comment(post_id):
 
     return jsonify({"message": "Comment added successfully"}), 201
 
-@feed_bp.route('/posts/get-comments-for/<post_id>', methods = ["GET"])
+@feed_bp.route('/posts/get-comments-for/<post_id>', methods=["GET"])
 def get_posts(post_id):
     comments_cursor = comments_collection.find(
-    {"post_id": ObjectId(post_id)},
-    {"_id": 0}  # optional: hide Mongo _id
+        {"post_id": ObjectId(post_id)},
+        {"_id": 0}
     )
+
     comments = []
+
     for single_comment in comments_cursor:
         user = users_collection.find_one(
             {"_id": ObjectId(single_comment["commentor_id"])},
             {"profile_pic": 1, "_id": 0}
         )
+
         single_comment["commentor_pfp"] = (
             user.get("profile_pic")
-            if user else
-            "https://res.cloudinary.com/dkj0tdmls/image/upload/v1766263629/default_pfp.jpg"
+            if user and "profile_pic" in user
+            else "https://res.cloudinary.com/dkj0tdmls/image/upload/v1766263629/default_pfp.jpg"
         )
+
         comments.append(single_comment)
 
-        return jsonify({
-                "comments": comments
-            })
+    return jsonify({
+        "comments": comments
+    })
+
