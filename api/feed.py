@@ -196,22 +196,16 @@ def add_comment(post_id):
 @feed_bp.route('/posts/get-comments-for/<post_id>', methods=["GET"])
 def get_posts(post_id):
     try:
-        # Validate ObjectId
         if not ObjectId.is_valid(post_id):
             return jsonify({"error": "Invalid post ID"}), 400
         
-        comments_cursor = comments_collection.find(
-            {"post_id": ObjectId(post_id)},
-            {"_id": 0}
-        )
-        
+        comments_cursor = comments_collection.find({"post_id": ObjectId(post_id)})
         comments = []
         
         for single_comment in comments_cursor:
-            # commentor_id is already an ObjectId, don't wrap it again
             user = users_collection.find_one(
-                {"_id": single_comment["commentor_id"]},  # Remove ObjectId() wrapper
-                {"profile_pic": 1, "_id": 0}
+                {"_id": single_comment["commentor_id"]},
+                {"profile_pic": 1, "username": 1, "_id": 0}
             )
             
             single_comment["commentor_pfp"] = (
@@ -220,13 +214,14 @@ def get_posts(post_id):
                 else "https://res.cloudinary.com/dkj0tdmls/image/upload/v1766263629/default_pfp.jpg"
             )
             
-            # Convert ObjectIds to strings for JSON serialization
             single_comment["comment_id"] = str(single_comment["_id"])
             single_comment["post_id"] = str(single_comment["post_id"])
             single_comment["commentor_id"] = str(single_comment["commentor_id"])
-            single_comment["commentor_name"] = str(user.get("username"))
-            single_comment["created_at"] = single_comment["created_at"].isoformat()
-            
+            single_comment["commentor_name"] = user.get("username") if user else "Unknown"
+            single_comment["created_at"] = (
+                single_comment["created_at"].isoformat()
+                if "created_at" in single_comment else None
+            )
             
             comments.append(single_comment)
         
@@ -234,7 +229,7 @@ def get_posts(post_id):
     
     except Exception as e:
         print(f"Error fetching comments: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": "Internal server error"}), 500
 
 
 @feed_bp.route("/posts/comment_likes/<comment_id>", methods=["POST"])
