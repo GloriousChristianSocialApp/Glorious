@@ -200,11 +200,14 @@ def get_posts(post_id):
             return jsonify({"error": "Invalid post ID"}), 400
 
         comments_cursor = comments_collection.find({"post_id": ObjectId(post_id)})
-        comments = []
+        comments_list = []
 
-        # Collect all unique commentor_ids
-        commentor_ids = {c["commentor_id"] for c in comments_cursor}
-        comments_cursor.rewind()  # Reset cursor for iteration
+        # Collect all unique commentor_ids as ObjectId
+        commentor_ids = {
+            c["commentor_id"] if isinstance(c["commentor_id"], ObjectId) else ObjectId(c["commentor_id"])
+            for c in comments_cursor
+        }
+        comments_cursor.rewind()  # reset cursor for iteration
 
         # Fetch all users at once to avoid N+1 queries
         users_map = {
@@ -218,10 +221,10 @@ def get_posts(post_id):
         default_pfp = "https://res.cloudinary.com/dkj0tdmls/image/upload/v1766263629/default_pfp.jpg"
 
         for c in comments_cursor:
-            commentor_id_str = str(c["commentor_id"])
+            commentor_id_str = str(c["commentor_id"])  # string version to match users_map keys
             user = users_map.get(commentor_id_str)
 
-            comment_json = {
+            comments_list.append({
                 "comment_id": str(c["_id"]),
                 "post_id": str(c["post_id"]),
                 "commentor_id": commentor_id_str,
@@ -232,11 +235,9 @@ def get_posts(post_id):
                 "likes": c.get("likes", 0),
                 "dislikes": c.get("dislikes", 0),
                 "recomments": c.get("recomments", 0)
-            }
+            })
 
-            comments.append(comment_json)
-
-        return jsonify({"comments": comments})
+        return jsonify({"comments": comments_list})
 
     except Exception as e:
         import traceback
