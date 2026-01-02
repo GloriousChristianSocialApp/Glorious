@@ -4,6 +4,8 @@
 
 This repository contains the full stack for the Glorious platform, organized into a decoupled architecture for the frontend and the backend server.
 
+[**INSTALL GLORIOUS**](https://gloriouschristiansocialapp.github.io/Glorious/install/)
+
 ---
 ## 🕊 Mission & Contribution
 
