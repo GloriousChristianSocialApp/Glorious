@@ -5,8 +5,9 @@ from client.mongo_client import db , users_collection , friend_requests_collecti
 from client.cloudinary_client import config_cloudinary
 import cloudinary
 import cloudinary.uploader
-import cloudinary.api
+import os 
 
+default_profile_picture = os.environ.get("DEFAULT_PROFILE_IMAGE")
 
 def _to_objectid_if_possible(uid):
     """
@@ -226,9 +227,7 @@ def get_posts(post_id):
         users_map = {user["_id"]: user for user in users_cursor}
         print(users_map)
 
-        # Default profile image
-        default_pfp = "https://res.cloudinary.com/dkj0tdmls/image/upload/v1766263629/default_pfp.jpgish"
-
+        
         # Build comments response
         for c in comments_data:
             commentor_id = c.get("commentor_id")
@@ -241,7 +240,7 @@ def get_posts(post_id):
                 "post_id": str(c["post_id"]),
                 "commentor_id": commentor_id_str,
                 "commentor_name": username.get("username") if username else "Unknown",
-                "commentor_pfp": username.get("profileImage") if username and username.get("profileImage") else default_pfp,
+                "commentor_pfp": username.get("profileImage") if username and username.get("profileImage") else default_profile_picture,
                 "message": c.get("message", ""),
                 "created_at": c["created_at"].isoformat() if c.get("created_at") else None,
                 "likes": c.get("likes", 0),
