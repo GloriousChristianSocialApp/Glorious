@@ -215,17 +215,16 @@ def get_posts(post_id):
         for c in comments_cursor:
             comments_data.append(c)
             commentor_id = c.get("commentor_id")
-            print(commentor_id)
+            
 
             if commentor_id:
                 commentor_ids.append(commentor_id)
-                print(commentor_ids)
+                
 
         # Fetch all users at once
         users_cursor = users_collection.find({"_id": {"$in": list(commentor_ids)}})
-        print(users_cursor)
         users_map = {user["_id"]: user for user in users_cursor}
-        print(users_map)
+        
 
         
         # Build comments response
@@ -233,7 +232,7 @@ def get_posts(post_id):
             commentor_id = c.get("commentor_id")
             commentor_id_str = str(commentor_id) if commentor_id else None
             username = users_map.get(ObjectId(commentor_id))
-            print(username)
+            
 
             comments_list.append({
                 "comment_id": str(c["_id"]),

@@ -1,8 +1,13 @@
 from pymongo import MongoClient
 import os
 import cloudinary
+
+################for  local test ##################
 from dotenv import load_dotenv
 load_dotenv()
+######################################################
+
+
 # Load environment variables
 MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017")
 CLOUD_NAME = os.environ.get("CLOUDINARY_CLOUD_NAME")

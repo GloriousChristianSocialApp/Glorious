@@ -133,11 +133,7 @@ def bad_request(error):
 if __name__ == '__main__':
     logger.info("Starting cu_app server...")
     logger.info("Server will be available at: http://0.0.0.0:5000")
-    logger.info("WebSocket endpoint: ws://0.0.0.0:5000")
-    print("///////////////////////////////////////////////////////////")
-    print(users_collection.find_one({"_id": ObjectId("6947324c78d3ad5760dc02cf")})
-          
-)
+    logger.info("WebSocket endpoint: ws://0.0.0.0:5000") 
     
     socketio.run(
         app, 
