@@ -198,38 +198,54 @@ def get_posts(post_id):
     try:
         if not ObjectId.is_valid(post_id):
             return jsonify({"error": "Invalid post ID"}), 400
-        
+
         comments_cursor = comments_collection.find({"post_id": ObjectId(post_id)})
         comments = []
-        
-        for single_comment in comments_cursor:
-            user = users_collection.find_one(
-                {"_id": single_comment["commentor_id"]},
-                {"profile_pic": 1, "username": 1, "_id": 0}
+
+        # Collect all unique commentor_ids
+        commentor_ids = {c["commentor_id"] for c in comments_cursor}
+        comments_cursor.rewind()  # Reset cursor for iteration
+
+        # Fetch all users at once to avoid N+1 queries
+        users_map = {
+            str(u["_id"]): u
+            for u in users_collection.find(
+                {"_id": {"$in": list(commentor_ids)}},
+                {"username": 1, "profileImage": 1, "_id": 1}
             )
-            
-            single_comment["commentor_pfp"] = (
-                user.get("profile_pic")
-                if user and "profile_pic" in user
-                else "https://res.cloudinary.com/dkj0tdmls/image/upload/v1766263629/default_pfp.jpg"
-            )
-            
-            single_comment["comment_id"] = str(single_comment["_id"])
-            single_comment["post_id"] = str(single_comment["post_id"])
-            single_comment["commentor_id"] = str(single_comment["commentor_id"])
-            single_comment["commentor_name"] = user.get("username") if user else "Unknown"
-            single_comment["created_at"] = (
-                single_comment["created_at"].isoformat()
-                if "created_at" in single_comment else None
-            )
-            
-            comments.append(single_comment)
-        
+        }
+
+        for c in comments_cursor:
+            commentor_id_str = str(c["commentor_id"])
+            user = users_map.get(commentor_id_str)
+
+            comment_json = {
+                "comment_id": str(c["_id"]),
+                "post_id": str(c["post_id"]),
+                "commentor_id": commentor_id_str,
+                "commentor_name": user.get("username") if user else "Unknown",
+                "commentor_pfp": (
+                    user.get("profileImage")
+                    if user and "profileImage" in user
+                    else "https://res.cloudinary.com/dkj0tdmls/image/upload/v1766263629/default_pfp.jpg"
+                ),
+                "message": c.get("message", ""),
+                "created_at": c["created_at"].isoformat() if c.get("created_at") else None,
+                "likes": c.get("likes", 0),
+                "dislikes": c.get("dislikes", 0),
+                "recomments": c.get("recomments", 0)
+            }
+
+            comments.append(comment_json)
+
         return jsonify({"comments": comments})
-    
+
     except Exception as e:
-        print(f"Error fetching comments: {str(e)}")
-        return jsonify({"error": "Internal server error"}), 500
+        import traceback
+        traceback_str = traceback.format_exc()
+        print(traceback_str)
+        return jsonify({"error": "Internal server error", "trace": traceback_str}), 500
+
 
 
 @feed_bp.route("/posts/comment_likes/<comment_id>", methods=["POST"])
