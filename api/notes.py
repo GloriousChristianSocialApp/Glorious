@@ -2,11 +2,10 @@ from flask import Blueprint, request, jsonify
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 import datetime
-from client.mongo_client import db
+from client.mongo_client import notes_collection
 
 notes_bp = Blueprint('notes', __name__)
 
-notes_collection = db.notes # Collection for notes
 
 
 

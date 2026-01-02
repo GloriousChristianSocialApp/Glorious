@@ -5,26 +5,16 @@ from pymongo.errors import ConnectionFailure
 import bcrypt
 import jwt
 import datetime
-import smtplib
-import random
-import string
-from client.mongo_client import notifications_collection , users_collection , notes_collection
+from client.cloudinary_client import config_cloudinary
+from client.mongo_client import notifications_collection , users_collection , notes_collection , posts_collection , friend_requests_collection
 from werkzeug.utils import secure_filename
 import os
-import cloudinary
 import cloudinary.uploader
-
-
-
 
 auth_bp = Blueprint('auth', __name__)
 
-# This should ideally be passed from the main app or configured globally
-
 default_profile_picture = os.environ.get("DEFAULT_PROFILE_IMAGE")
-
-
-# Secret key for JWT. In a real app, this should be a strong, random key loaded from environment variables.
+config_cloudinary()
 SECRET_KEY = os.environ.get("JWT_TOKEN")
 
 
@@ -211,29 +201,29 @@ def get_user_activity(user_id):
             })
 
         # Fetch recent posts (assuming a 'posts' collection exists)
-        # posts_cursor = db.posts.find({'userId': user_id}).sort('createdAt', -1).limit(5)
-        # for post in posts_cursor:
-        #     activities.append({
-        #         'type': 'postCreated',
-        #         'title': 'Shared a post',
-        #         'subtitle': post.get('content', ''),
-        #         'timestamp': post.get('createdAt').isoformat()
-        #     })
+        posts_cursor = posts_collection.find({'userId': user_id}).sort('createdAt', -1).limit(5)
+        for post in posts_cursor:
+            activities.append({
+                'type': 'postCreated',
+                'title': 'Shared a post',
+                'subtitle': post.get('content', ''),
+                'timestamp': post.get('createdAt').isoformat()
+            })
 
         # Fetch recent friend acceptances (where user is either from or to, and status is accepted)
-        # friend_acceptances_cursor = db.friend_requests.find({
-        #     '$or': [{'fromUserId': user_id}, {'toUserId': user_id}],
-        #     'status': 'accepted'
-        # }).sort('acceptedAt', -1).limit(5)
-        # for req in friend_acceptances_cursor:
-        #     other_user_id = req['toUserId'] if req['fromUserId'] == user_id else req['fromUserId']
-        #     other_user = users_collection.find_one({'_id': ObjectId(other_user_id)}, {'username': 1})
-        #     activities.append({
-        #         'type': 'friendAdded',
-        #         'title': f'Connected with {other_user.get('username', 'someone')}',
-        #         'subtitle': 'You are now friends',
-        #         'timestamp': req.get('acceptedAt').isoformat()
-        #     })
+        friend_acceptances_cursor = friend_requests_collection.find({
+            '$or': [{'fromUserId': user_id}, {'toUserId': user_id}],
+            'status': 'accepted'
+        }).sort('acceptedAt', -1).limit(5)
+        for req in friend_acceptances_cursor:
+            other_user_id = req['toUserId'] if req['fromUserId'] == user_id else req['fromUserId']
+            other_user = users_collection.find_one({'_id': ObjectId(other_user_id)}, {'username': 1})
+            activities.append({
+                'type': 'friendAdded',
+                'title': f'Connected with {other_user.get('username', 'someone')}',
+                'subtitle': 'You are now friends',
+                'timestamp': req.get('acceptedAt').isoformat()
+            })
 
         # Sort all activities by timestamp (most recent first)
         activities.sort(key=lambda x: x['timestamp'], reverse=True)
