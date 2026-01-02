@@ -203,26 +203,16 @@ def get_posts(post_id):
         comments_list = []
 
         # Collect all unique commentor_ids as ObjectId
-        commentor_ids = {
-            c["commentor_id"] if isinstance(c["commentor_id"], ObjectId) else ObjectId(c["commentor_id"])
-            for c in comments_cursor
-        }
+        commentor_id = comments_cursor.get('commentore_id')
         comments_cursor.rewind()  # reset cursor for iteration
 
-        # Fetch all users at once to avoid N+1 queries
-        users_map = {
-            str(u["_id"]): u
-            for u in users_collection.find(
-                {"_id": {"$in": list(commentor_ids)}},
-                {"username": 1, "profileImage": 1, "_id": 1}
-            )
-        }
+        user = users_collection.find_one({'_id': commentor_id})
 
         default_pfp = "https://res.cloudinary.com/dkj0tdmls/image/upload/v1766263629/default_pfp.jpg"
 
         for c in comments_cursor:
             commentor_id_str = str(c["commentor_id"])  # string version to match users_map keys
-            user = users_map.get(commentor_id_str)
+    
 
             comments_list.append({
                 "comment_id": str(c["_id"]),
