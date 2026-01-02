@@ -9,7 +9,6 @@ from flask_socketio import SocketIO, emit
 from pymongo.errors import ConnectionFailure
 from flask_cors import CORS
 import logging
-from client.mongo_client import users_collection
 
 from api.items import items_bp
 from api.auth import auth_bp
