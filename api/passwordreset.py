@@ -18,10 +18,30 @@ passreset_bp = Blueprint('passreset', __name__)
 # --------------------------------------------------
 # TTL index (OTP auto-expires)
 # --------------------------------------------------
-OTP_collection.create_index(
-    [("created_at", ASCENDING)],
-    expireAfterSeconds=900
-)
+def ensure_ttl_index():
+    """Ensure TTL index exists with correct expireAfterSeconds value"""
+    try:
+        existing_indexes = OTP_collection.index_information()
+        
+        if "created_at_1" in existing_indexes:
+            existing_ttl = existing_indexes["created_at_1"].get("expireAfterSeconds")
+            if existing_ttl != 900:
+                # Drop and recreate with correct TTL
+                OTP_collection.drop_index("created_at_1")
+                OTP_collection.create_index(
+                    [("created_at", ASCENDING)],
+                    expireAfterSeconds=900
+                )
+        else:
+            # Create new index
+            OTP_collection.create_index(
+                [("created_at", ASCENDING)],
+                expireAfterSeconds=900
+            )
+    except Exception as e:
+        print(f"Warning: Could not ensure TTL index: {e}")
+
+ensure_ttl_index()
 
 # --------------------------------------------------
 # SEND OTP

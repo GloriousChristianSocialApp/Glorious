@@ -58,7 +58,7 @@ app.register_blueprint(passreset_bp)
 @app.route('/')
 def home():
     return jsonify({
-        "message": "Welcome to the cu_app API server!",
+        "message": "Welcome to the glorious API server!",
         "status": "running",
         "endpoints": {
             "auth": "/login, /register",
