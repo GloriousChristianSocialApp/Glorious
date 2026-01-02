@@ -171,27 +171,25 @@ def add_comment(post_id):
     comment = {
         "commentor_id": ObjectId(data["commentor_id"]),
         "message": data["comment_message"],
-        "created_at": datetime.now(),
+        "created_at": datetime.utcnow(),
         "likes": 0,
         "dislikes": 0,
         "recomments": 0
     }
 
-    result = comments_collection.update_one(
-        {"post_id": ObjectId(post_id)},
-        {"$push": {"comments": comment}}
-    )
-    previouscommentscount = db.posts.find_one({"_id": ObjectId(post_id)})['commentsCount']
-
-    db.posts.update_one(
-        {'_id': ObjectId(post_id)},
-        {"$set":{"commentsCount" : (previouscommentscount + 1)}}
+    result = db.posts.update_one(
+        {"_id": ObjectId(post_id)},
+        {
+            "$push": {"comments": comment},
+            "$inc": {"commentsCount": 1}
+        }
     )
 
     if result.matched_count == 0:
         return jsonify({"error": "Post not found"}), 404
 
     return jsonify({"message": "Comment added successfully"}), 201
+
 
 @feed_bp.route('/posts/get-comments-for/<post_id>', methods=["GET"])
 def get_posts(post_id):
