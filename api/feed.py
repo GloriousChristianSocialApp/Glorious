@@ -164,7 +164,7 @@ def get_all_posts():
 
 from client.mongo_client import comments_collection
 
-@feed_bp.route("posts/comment/<post_id>", methods=["POST"])
+@feed_bp.route("/posts/comment/<post_id>", methods=["POST"])
 def add_comment(post_id):
     data = request.get_json()
 

@@ -3,10 +3,11 @@ import cloudinary
 
 cloud_name=CLOUD_NAME = os.environ.get("CLOUDINARY_CLOUD_NAME")
 api_key=API_KEY = os.environ.get("CLOUDINARY_API_KEY")
-api_secret=API_SECRET = os.environ.get("CLOUDINARY_API_SECRET"),
-
+api_secret=API_SECRET = os.environ.get("CLOUDINARY_API_SECRET")
 
 def config_cloudinary():
+    if not cloud_name or not api_key or not api_secret:
+        raise RuntimeError("Cloudinary environment variables are missing")
     cloudinary.config( 
         cloud_name = cloud_name, 
         api_key = api_key, 
