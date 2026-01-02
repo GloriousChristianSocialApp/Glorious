@@ -167,8 +167,9 @@ from client.mongo_client import comments_collection
 @feed_bp.route("/posts/comment/<post_id>", methods=["POST"])
 def add_comment(post_id):
     data = request.get_json()
-
+    
     comment = {
+        "post_id": ObjectId(post_id),
         "commentor_id": ObjectId(data["commentor_id"]),
         "message": data["comment_message"],
         "created_at": datetime.utcnow(),
@@ -176,18 +177,19 @@ def add_comment(post_id):
         "dislikes": 0,
         "recomments": 0
     }
-
+    
+    # Insert comment into comments collection
+    comments_collection.insert_one(comment)
+    
+    # Update comment count in posts collection
     result = db.posts.update_one(
         {"_id": ObjectId(post_id)},
-        {
-            "$push": {"comments": comment},
-            "$inc": {"commentsCount": 1}
-        }
+        {"$inc": {"commentsCount": 1}}
     )
-
+    
     if result.matched_count == 0:
         return jsonify({"error": "Post not found"}), 404
-
+    
     return jsonify({"message": "Comment added successfully"}), 201
 
 
@@ -196,25 +198,23 @@ def get_posts(post_id):
     comments_cursor = comments_collection.find(
         {"post_id": ObjectId(post_id)},
         {"_id": 0}
-    )
-
+    ).sort("created_at", -1)  # Optional: sort by newest first
+    
     comments = []
-
+    
     for single_comment in comments_cursor:
         user = users_collection.find_one(
-            {"_id": ObjectId(single_comment["commentor_id"])},
+            {"_id": single_comment["commentor_id"]},
             {"profile_pic": 1, "_id": 0}
         )
-
+        
         single_comment["commentor_pfp"] = (
             user.get("profile_pic")
             if user and "profile_pic" in user
             else "https://res.cloudinary.com/dkj0tdmls/image/upload/v1766263629/default_pfp.jpg"
         )
-
+        
         comments.append(single_comment)
-
-    return jsonify({
-        "comments": comments
-    })
+    
+    return jsonify({"comments": comments})
 
