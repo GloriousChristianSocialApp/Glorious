@@ -81,7 +81,7 @@ def get_code():
     # Send OTP email
     send_email_emailjs(
         target_username=user["username"],
-        recipient=user["email"],
+        recipient_email=user["email"],
         otp=otp
     )
 
