@@ -202,13 +202,13 @@ def get_posts(post_id):
         comments_cursor = comments_collection.find({"post_id": ObjectId(post_id)})
         comments_list = []
 
-        # Collect all unique commentor_ids as ObjectIds
+        # Collect unique commentor_ids as ObjectIds
         commentor_ids = set()
         comments_data = []
         for c in comments_cursor:
             comments_data.append(c)
             if c.get("commentor_id"):
-                commentor_ids.add(c["commentor_id"])  # Already ObjectId
+                commentor_ids.add(c["commentor_id"])
 
         # Fetch all users at once
         users_cursor = users_collection.find({"_id": {"$in": list(commentor_ids)}})
@@ -217,14 +217,15 @@ def get_posts(post_id):
         default_pfp = "https://res.cloudinary.com/dkj0tdmls/image/upload/v1766263629/default_pfp.jpgish"
 
         for c in comments_data:
-            commentor_id_str = str(c["commentor_id"])
+            commentor_id = c.get("commentor_id")
+            commentor_id_str = str(commentor_id) if commentor_id else None
             user = users_map.get(commentor_id_str)
 
             comments_list.append({
                 "comment_id": str(c["_id"]),
                 "post_id": str(c["post_id"]),
                 "commentor_id": commentor_id_str,
-                "commentor_name": user.get("username"),
+                "commentor_name": user.get("username") if user else "Unknown",
                 "commentor_pfp": user.get("profileImage") if user and user.get("profileImage") else default_pfp,
                 "message": c.get("message", ""),
                 "created_at": c["created_at"].isoformat() if c.get("created_at") else None,
@@ -240,6 +241,7 @@ def get_posts(post_id):
         traceback_str = traceback.format_exc()
         print(traceback_str)
         return jsonify({"error": "Internal server error", "trace": traceback_str}), 500
+
 @feed_bp.route("/posts/comment_likes/<comment_id>", methods=["POST"])
 def like_comment(comment_id):
     try:
