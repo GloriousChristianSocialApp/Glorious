@@ -2,10 +2,15 @@ import smtplib
 import os
 from email.message import EmailMessage
 
+################for  local test ##################
+from dotenv import load_dotenv
+load_dotenv()
+######################################################
+
 
 def send_email(target_username, recipient, otp):
     SMTP_SERVER = os.environ.get("SMTP_SERVER")
-    SMTP_PORT = int(os.environ.get("SMTP_PORT", 587))
+    SMTP_PORT = int(os.environ.get("SMTP_PORT", 465))
     SENDER_EMAIL = os.environ.get("SMTP_EMAIL")
     SENDER_PASSWORD = os.environ.get("SMTP_PASSWORD")
 
@@ -35,8 +40,7 @@ def send_email(target_username, recipient, otp):
 
     server = None
     try:
-        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=15)
-        server.starttls()
+        server = smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, timeout=15)
         server.login(SENDER_EMAIL, SENDER_PASSWORD)
         server.send_message(msg)
         print("✅ Email sent successfully")
@@ -48,3 +52,6 @@ def send_email(target_username, recipient, otp):
     finally:
         if server:
             server.quit()
+
+
+send_email("ken" , "kenkaroki17@gmail.com", 358796)
