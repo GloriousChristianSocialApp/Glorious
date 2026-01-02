@@ -5,7 +5,7 @@ from client.mongo_client import (
     notifications_collection
 )
 from bson.objectid import ObjectId
-from client.smptlib_client import send_email
+from client.emailjs_client import send_email_emailjs
 from pymongo import ASCENDING
 import random
 import string
@@ -20,7 +20,7 @@ passreset_bp = Blueprint('passreset', __name__)
 # --------------------------------------------------
 OTP_collection.create_index(
     [("created_at", ASCENDING)],
-    expireAfterSeconds=3600  # 1 hour (10–15 min recommended in prod)
+    expireAfterSeconds=900
 )
 
 # --------------------------------------------------
@@ -59,7 +59,7 @@ def get_code():
     })
 
     # Send OTP email
-    send_email(
+    send_email_emailjs(
         target_username=user["username"],
         recipient=user["email"],
         otp=otp
