@@ -202,17 +202,22 @@ def get_posts(post_id):
         comments_cursor = comments_collection.find({"post_id": ObjectId(post_id)})
         comments_list = []
 
-        # Collect all unique commentor_ids as ObjectId
-        commentor_id = comments_cursor.get('commentore_id')
-        comments_cursor.rewind()  # reset cursor for iteration
+        # Collect all unique commentor_ids
+        commentor_ids = set()
+        comments_data = []
+        for c in comments_cursor:
+            comments_data.append(c)
+            commentor_ids.add(c.get("commentor_id"))
 
-        user = users_collection.find_one({'_id': commentor_id})
+        # Fetch all users at once
+        users_cursor = users_collection.find({"_id": {"$in": list(commentor_ids)}})
+        users_map = {str(user["_id"]): user for user in users_cursor}
 
         default_pfp = "https://res.cloudinary.com/dkj0tdmls/image/upload/v1766263629/default_pfp.jpg"
 
-        for c in comments_cursor:
-            commentor_id_str = str(c["commentor_id"])  # string version to match users_map keys
-    
+        for c in comments_data:
+            commentor_id_str = str(c["commentor_id"])
+            user = users_map.get(commentor_id_str)
 
             comments_list.append({
                 "comment_id": str(c["_id"]),
@@ -234,7 +239,6 @@ def get_posts(post_id):
         traceback_str = traceback.format_exc()
         print(traceback_str)
         return jsonify({"error": "Internal server error", "trace": traceback_str}), 500
-
 
 @feed_bp.route("/posts/comment_likes/<comment_id>", methods=["POST"])
 def like_comment(comment_id):
