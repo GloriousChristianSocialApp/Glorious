@@ -8,7 +8,7 @@ import datetime
 import smtplib
 import random
 import string
-from client.mongo_client import notifications_collection , client
+from client.mongo_client import notifications_collection , users_collection , notes_collection
 from werkzeug.utils import secure_filename
 import os
 import cloudinary
@@ -22,10 +22,7 @@ auth_bp = Blueprint('auth', __name__)
 # This should ideally be passed from the main app or configured globally
 
 default_profile_picture = os.environ.get("DEFAULT_PROFILE_IMAGE")
-db = client.followerdatabase # Using a specific database for cu_app
-dbnotes = client.followerdatabase # Using a specific database for cu_app
-users_collection = db.users # Collection for users
-verification_codes_collection = db.verification_codes # Collection for verification codes
+
 
 # Secret key for JWT. In a real app, this should be a strong, random key loaded from environment variables.
 SECRET_KEY = os.environ.get("JWT_TOKEN")
@@ -204,7 +201,7 @@ def get_user_activity(user_id):
         activities = []
         
         # Fetch recent notes
-        notes_cursor = dbnotes.notes.find({'userId': user_id}).sort('createdAt', -1).limit(5)
+        notes_cursor = notes_collection.notes.find({'userId': user_id}).sort('createdAt', -1).limit(5)
         for note in notes_cursor:
             activities.append({
                 'type': 'noteCreated',

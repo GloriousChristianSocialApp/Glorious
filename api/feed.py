@@ -194,6 +194,10 @@ def add_comment(post_id):
 
 @feed_bp.route('/posts/get-comments-for/<post_id>', methods=["GET"])
 def get_posts(post_id):
+   
+
+    print(users_collection.find_one({"_id": ObjectId('6947324c78d3ad5760dc02cf')}))
+
     try:
         # Validate post_id
         if not ObjectId.is_valid(post_id):
@@ -204,23 +208,23 @@ def get_posts(post_id):
         comments_list = []
 
         comments_data = []
-        commentor_ids = set()
+        commentor_ids = []
 
         # Collect comments and unique commentor_ids
         for c in comments_cursor:
             comments_data.append(c)
             commentor_id = c.get("commentor_id")
-            
-            # Fix: ensure commentor_id is ObjectId
-            if isinstance(commentor_id, dict) and "$oid" in commentor_id:
-                commentor_id = ObjectId(commentor_id["$oid"])
-            
+            print(commentor_id)
+
             if commentor_id:
-                commentor_ids.add(commentor_id)
+                commentor_ids.append(commentor_id)
+                print(commentor_ids)
 
         # Fetch all users at once
         users_cursor = users_collection.find({"_id": {"$in": list(commentor_ids)}})
-        users_map = {str(user["_id"]): user for user in users_cursor}
+        print(users_cursor)
+        users_map = {user["_id"]: user for user in users_cursor}
+        print(users_map)
 
         # Default profile image
         default_pfp = "https://res.cloudinary.com/dkj0tdmls/image/upload/v1766263629/default_pfp.jpgish"
@@ -228,20 +232,16 @@ def get_posts(post_id):
         # Build comments response
         for c in comments_data:
             commentor_id = c.get("commentor_id")
-            
-            # Convert dict to ObjectId if necessary
-            if isinstance(commentor_id, dict) and "$oid" in commentor_id:
-                commentor_id = ObjectId(commentor_id["$oid"])
-            
             commentor_id_str = str(commentor_id) if commentor_id else None
-            user = users_map.get(commentor_id_str)
+            username = users_map.get(ObjectId(commentor_id))
+            print(username)
 
             comments_list.append({
                 "comment_id": str(c["_id"]),
                 "post_id": str(c["post_id"]),
                 "commentor_id": commentor_id_str,
-                "commentor_name": user.get("username") if user else "Unknown",
-                "commentor_pfp": user.get("profileImage") if user and user.get("profileImage") else default_pfp,
+                "commentor_name": username.get("username") if username else "Unknown",
+                "commentor_pfp": username.get("profileImage") if username and username.get("profileImage") else default_pfp,
                 "message": c.get("message", ""),
                 "created_at": c["created_at"].isoformat() if c.get("created_at") else None,
                 "likes": c.get("likes", 0),

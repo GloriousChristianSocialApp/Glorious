@@ -1,4 +1,5 @@
 ##################### necessary for deployment DO NOT REMOVE #############################################
+from bson import ObjectId
 import eventlet
 eventlet.monkey_patch()
 ###########################################################################################################
@@ -9,6 +10,7 @@ from flask_socketio import SocketIO, emit
 from pymongo.errors import ConnectionFailure
 from flask_cors import CORS
 import logging
+from client.mongo_client import users_collection
 
 from api.items import items_bp
 from api.auth import auth_bp
@@ -132,6 +134,10 @@ if __name__ == '__main__':
     logger.info("Starting cu_app server...")
     logger.info("Server will be available at: http://0.0.0.0:5000")
     logger.info("WebSocket endpoint: ws://0.0.0.0:5000")
+    print("///////////////////////////////////////////////////////////")
+    print(users_collection.find_one({"_id": ObjectId("6947324c78d3ad5760dc02cf")})
+          
+)
     
     socketio.run(
         app, 
