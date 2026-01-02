@@ -1,18 +1,6 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
-$__dart_deferred_initializers__.current=function(a,b,c,$){var B,C,A
-B=c[0]
-C=c[2]
-A=c[90]
-var z=a.updateTypes([]);(function constants(){A.Qg=new B.A(1,0.9098039215686274,0.9607843137254902,0.9137254901960784,C.f)
-A.P9=new B.A(1,0.7843137254901961,0.9019607843137255,0.788235294117647,C.f)
-A.Q_=new B.A(1,0.6470588235294118,0.8392156862745098,0.6549019607843137,C.f)
-A.Qp=new B.A(1,0.5058823529411764,0.7803921568627451,0.5176470588235295,C.f)
-A.PL=new B.A(1,0.4,0.7333333333333333,0.41568627450980394,C.f)
-A.Qi=new B.A(1,0.2980392156862745,0.6862745098039216,0.3137254901960784,C.f)
-A.Qo=new B.A(1,0.2627450980392157,0.6274509803921569,0.2784313725490196,C.f)
-A.OQ=new B.A(1,0.2196078431372549,0.5568627450980392,0.23529411764705882,C.f)
-A.Pw=new B.A(1,0.1803921568627451,0.49019607843137253,0.19607843137254902,C.f)
-A.P4=new B.A(1,0.10588235294117647,0.3686274509803922,0.12549019607843137,C.f)
-A.amJ=new B.a([50,A.Qg,100,A.P9,200,A.Q_,300,A.Qp,400,A.PL,500,A.Qi,600,A.Qo,700,A.OQ,800,A.Pw,900,A.P4],B.K("a<d,A>"))
-A.dn=new B.qw(A.amJ,1,0.2980392156862745,0.6862745098039216,0.3137254901960784,C.f)})()};
-(a=>{a["0AXVgXwS1pbS2xnhFKlMdw3M0cI="]=a.current})($__dart_deferred_initializers__);
+$__dart_deferred_initializers__.current=function(a,b,c,$){var A,B
+A=c[0]
+B=c[122]
+var z=a.updateTypes([]);(function constants(){B.KQ=new A.b4("Failed to load required resources",null,null,null,null,null,null,null,null,null,null,null)})()};
+(a=>{a["b8xkDtixnElC5Jw9w8ouxGCwKvo="]=a.current})($__dart_deferred_initializers__);
