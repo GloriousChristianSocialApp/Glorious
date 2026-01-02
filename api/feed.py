@@ -215,6 +215,8 @@ def get_posts(post_id):
             )
         }
 
+        default_pfp = "https://res.cloudinary.com/dkj0tdmls/image/upload/v1766263629/default_pfp.jpg"
+
         for c in comments_cursor:
             commentor_id_str = str(c["commentor_id"])
             user = users_map.get(commentor_id_str)
@@ -223,12 +225,8 @@ def get_posts(post_id):
                 "comment_id": str(c["_id"]),
                 "post_id": str(c["post_id"]),
                 "commentor_id": commentor_id_str,
-                "commentor_name": user.get("username") if user else "Unknown",
-                "commentor_pfp": (
-                    user.get("profileImage")
-                    if user and "profileImage" in user
-                    else "https://res.cloudinary.com/dkj0tdmls/image/upload/v1766263629/default_pfp.jpg"
-                ),
+                "commentor_name": user.get("username") if user and user.get("username") else "Unknown",
+                "commentor_pfp": user.get("profileImage") if user and user.get("profileImage") else default_pfp,
                 "message": c.get("message", ""),
                 "created_at": c["created_at"].isoformat() if c.get("created_at") else None,
                 "likes": c.get("likes", 0),
@@ -245,7 +243,6 @@ def get_posts(post_id):
         traceback_str = traceback.format_exc()
         print(traceback_str)
         return jsonify({"error": "Internal server error", "trace": traceback_str}), 500
-
 
 
 @feed_bp.route("/posts/comment_likes/<comment_id>", methods=["POST"])
