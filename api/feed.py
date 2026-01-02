@@ -202,12 +202,13 @@ def get_posts(post_id):
         comments_cursor = comments_collection.find({"post_id": ObjectId(post_id)})
         comments_list = []
 
-        # Collect all unique commentor_ids
+        # Collect all unique commentor_ids as ObjectIds
         commentor_ids = set()
         comments_data = []
         for c in comments_cursor:
             comments_data.append(c)
-            commentor_ids.add(c.get("commentor_id"))
+            if c.get("commentor_id"):
+                commentor_ids.add(c["commentor_id"])  # Already ObjectId
 
         # Fetch all users at once
         users_cursor = users_collection.find({"_id": {"$in": list(commentor_ids)}})
@@ -239,7 +240,6 @@ def get_posts(post_id):
         traceback_str = traceback.format_exc()
         print(traceback_str)
         return jsonify({"error": "Internal server error", "trace": traceback_str}), 500
-
 @feed_bp.route("/posts/comment_likes/<comment_id>", methods=["POST"])
 def like_comment(comment_id):
     try:
