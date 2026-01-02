@@ -13,44 +13,40 @@ import datetime
 import hashlib
 import bcrypt
 
-
 passreset_bp = Blueprint('passreset', __name__)
 
-# Create TTL index ONCE (OTP expires automatically)
+# --------------------------------------------------
+# TTL index (OTP auto-expires)
+# --------------------------------------------------
 OTP_collection.create_index(
-    [("date_of_creation", ASCENDING)],
-    expireAfterSeconds=3600  # 1 hour (recommend 10–15 min in prod)
+    [("created_at", ASCENDING)],
+    expireAfterSeconds=3600  # 1 hour (10–15 min recommended in prod)
 )
-
 
 # --------------------------------------------------
 # SEND OTP
 # --------------------------------------------------
 @passreset_bp.route('/get_code', methods=['POST'])
 def get_code():
-    data = request.get_json()
+    data = request.get_json() or {}
     username = data.get('username')
 
     if not username:
         return jsonify({"message": "username required"}), 400
 
-    user_data = users_collection.find_one({"username": username})
-    if not user_data:
+    user = users_collection.find_one({"username": username})
+    if not user:
         return jsonify({"message": "User not found"}), 404
-    user_id = users_collection["username"]
+
+    user_id = user["_id"]
+
     # Generate OTP
-    chars = string.ascii_letters + string.digits
-    otp = ''.join(random.choice(chars) for _ in range(6))
+    otp = ''.join(
+        random.choices(string.ascii_letters + string.digits, k=6)
+    )
 
     # Hash OTP
     otp_hash = bcrypt.hashpw(otp.encode(), bcrypt.gensalt())
-
-    # Send OTP email
-    send_email(
-        targrt_username=user_data["username"],
-        recipient=user_data["email"],
-        otp=otp
-    )
 
     # Remove old OTPs
     OTP_collection.delete_many({"user_id": user_id})
@@ -59,10 +55,20 @@ def get_code():
     OTP_collection.insert_one({
         "user_id": user_id,
         "otp_hash": otp_hash,
-        "date_of_creation": datetime.datetime.utcnow()
+        "created_at": datetime.datetime.utcnow()
     })
 
-    return jsonify({"email": user_data["email"]}), 200
+    # Send OTP email
+    send_email(
+        target_username=user["username"],
+        recipient=user["email"],
+        otp=otp
+    )
+
+    return jsonify({
+        "message": "OTP sent",
+        "user_id": str(user_id)
+    }), 200
 
 
 # --------------------------------------------------
@@ -70,12 +76,17 @@ def get_code():
 # --------------------------------------------------
 @passreset_bp.route('/verify', methods=['POST'])
 def verify_password():
-    data = request.get_json()
+    data = request.get_json() or {}
     user_id = data.get('user_id')
     otp = data.get('otp')
 
     if not user_id or not otp:
         return jsonify({"message": "Invalid request"}), 400
+
+    try:
+        user_id = ObjectId(user_id)
+    except Exception:
+        return jsonify({"message": "Invalid user ID"}), 400
 
     record = OTP_collection.find_one({"user_id": user_id})
     if not record:
@@ -84,7 +95,7 @@ def verify_password():
     if not bcrypt.checkpw(otp.encode(), record["otp_hash"]):
         return jsonify({"message": "Invalid OTP"}), 401
 
-    # Generate reset token
+    # Generate secure reset token
     token = hashlib.sha384(
         f"{user_id}{otp}{datetime.datetime.utcnow()}".encode()
     ).hexdigest()
@@ -95,7 +106,7 @@ def verify_password():
     )
 
     return jsonify({
-        "message": "success",
+        "message": "OTP verified",
         "token": token
     }), 200
 
@@ -105,11 +116,16 @@ def verify_password():
 # --------------------------------------------------
 @passreset_bp.route('/new_password/<user_id>/<token>', methods=['POST'])
 def new_pass_setter(user_id, token):
-    data = request.get_json()
+    data = request.get_json() or {}
     new_password = data.get('new_password')
 
     if not new_password:
         return jsonify({"message": "Password required"}), 400
+
+    try:
+        user_id = ObjectId(user_id)
+    except Exception:
+        return jsonify({"message": "Invalid user ID"}), 400
 
     record = OTP_collection.find_one({"user_id": user_id})
     if not record or record.get("token") != token:
@@ -123,7 +139,7 @@ def new_pass_setter(user_id, token):
 
     # Update password
     users_collection.update_one(
-        {"_id": ObjectId(user_id)},
+        {"_id": user_id},
         {"$set": {"password": hashed_password}}
     )
 
@@ -132,7 +148,7 @@ def new_pass_setter(user_id, token):
 
     # Notify user
     notifications_collection.insert_one({
-        "userId": user_id,
+        "userId": str(user_id),
         "title": "Password Changed",
         "message": "Your password has been changed successfully.",
         "timestamp": datetime.datetime.utcnow(),

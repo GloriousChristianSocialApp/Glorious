@@ -1,5 +1,4 @@
 ##################### necessary for deployment DO NOT REMOVE #############################################
-from bson import ObjectId
 import eventlet
 eventlet.monkey_patch()
 ###########################################################################################################
