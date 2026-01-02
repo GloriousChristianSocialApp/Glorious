@@ -192,32 +192,47 @@ def add_comment(post_id):
     
     return jsonify({"message": "Comment added successfully"}), 201
 
-
 @feed_bp.route('/posts/get-comments-for/<post_id>', methods=["GET"])
 def get_posts(post_id):
     try:
+        # Validate post_id
         if not ObjectId.is_valid(post_id):
             return jsonify({"error": "Invalid post ID"}), 400
 
+        # Fetch comments for the post
         comments_cursor = comments_collection.find({"post_id": ObjectId(post_id)})
         comments_list = []
 
-        # Collect unique commentor_ids as ObjectIds
-        commentor_ids = set()
         comments_data = []
+        commentor_ids = set()
+
+        # Collect comments and unique commentor_ids
         for c in comments_cursor:
             comments_data.append(c)
-            if c.get("commentor_id"):
-                commentor_ids.add(c["commentor_id"])
+            commentor_id = c.get("commentor_id")
+            
+            # Fix: ensure commentor_id is ObjectId
+            if isinstance(commentor_id, dict) and "$oid" in commentor_id:
+                commentor_id = ObjectId(commentor_id["$oid"])
+            
+            if commentor_id:
+                commentor_ids.add(commentor_id)
 
         # Fetch all users at once
         users_cursor = users_collection.find({"_id": {"$in": list(commentor_ids)}})
         users_map = {str(user["_id"]): user for user in users_cursor}
 
+        # Default profile image
         default_pfp = "https://res.cloudinary.com/dkj0tdmls/image/upload/v1766263629/default_pfp.jpgish"
 
+        # Build comments response
         for c in comments_data:
             commentor_id = c.get("commentor_id")
+            
+            # Convert dict to ObjectId if necessary
+            if isinstance(commentor_id, dict) and "$oid" in commentor_id:
+                commentor_id = ObjectId(commentor_id["$oid"])
+            
             commentor_id_str = str(commentor_id) if commentor_id else None
             user = users_map.get(commentor_id_str)
 
