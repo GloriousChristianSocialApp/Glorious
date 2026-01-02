@@ -4,8 +4,7 @@ import 'package:Glorious/screens/notes_screen.dart' deferred as Notes;
 import 'package:Glorious/screens/feed_screen.dart' deferred as Feed;
 import 'package:Glorious/screens/friends_screen.dart' deferred as Friends;
 import 'package:Glorious/screens/account_screen.dart' deferred as Account;
-import 'package:Glorious/screens/notification_screen.dart'
-    deferred as Notifications;
+
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -36,10 +35,6 @@ class _MainNavigationState extends State<MainNavigation>
         icon: Icons.people_outlined,
         selectedIcon: Icons.people,
         label: 'Friends'),
-    NavigationItem(
-        icon: Icons.notifications_outlined,
-        selectedIcon: Icons.notifications,
-        label: 'Notifications'),
     NavigationItem(
         icon: Icons.person_outlined,
         selectedIcon: Icons.person,
@@ -88,10 +83,6 @@ class _MainNavigationState extends State<MainNavigation>
         screen = Friends.FriendsScreen();
         break;
       case 4:
-        await Notifications.loadLibrary();
-        screen = Notifications.NotificationScreen();
-        break;
-      case 5:
         await Account.loadLibrary();
         screen =    Account.AccountScreen();
         break;

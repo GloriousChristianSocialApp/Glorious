@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:typed_data';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart';
 import 'package:Glorious/models/bible_verse.dart';
 import 'package:Glorious/models/note.dart';
 import 'package:Glorious/models/post.dart';
@@ -189,7 +190,7 @@ class ApiService {
   }
 
 // Request OTP
-  Future<String?> requestOtp(String username) async {
+  Future<dynamic> requestOtp(String username) async {
     final response = await http.post(
       Uri.parse('$baseUrl/get_code'),
       headers: {'Content-Type': 'application/json'},
@@ -198,18 +199,19 @@ class ApiService {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      return data['email'];
+
+      return data;
     } else {
       throw Exception(jsonDecode(response.body)['message']);
     }
   }
 
   // Verify OTP
-  Future<String> verifyOtp(String userId, String otp) async {
+  Future<String> verifyOtp(String userName, String otp) async {
     final response = await http.post(
       Uri.parse('$baseUrl/verify'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'user_id': userId, 'otp': otp}),
+      body: jsonEncode({'user_id': userName, 'otp': otp}),
     );
 
     if (response.statusCode == 200) {
@@ -388,21 +390,74 @@ class ApiService {
     }
   }
 
-  Future<int> addComment(String postId, String commentMessage) async {
+Future<int> addComment(String postId, String commentMessage) async {
     try {
-      final commentorUserId = getUserId();
+      final commentorUserId = await getUserId(); // 🔥 FIX
+
       final response = await http.post(
         Uri.parse("$baseUrl/posts/comment/$postId"),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({
+        body: jsonEncode({
           "commentor_id": commentorUserId,
           "comment_message": commentMessage,
         }),
       );
 
       return response.statusCode;
+    } catch (e, s) {
+      debugPrint("🔥 addComment error: $e");
+      debugPrint(s.toString());
+      return 707;
+    }
+  }
+
+  Future<void> updateCommentLike(String commentId, bool isLike) async {
+    try {
+      final endpoint = isLike ? 'comment_likes' : 'comment_dislikes';
+
+      debugPrint(
+          '📤 Sending ${isLike ? "like" : "dislike"} for comment: $commentId');
+
+      final response = await http.post(
+        Uri.parse("$baseUrl/posts/$endpoint/$commentId"),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      debugPrint('📥 Response status: ${response.statusCode}');
+      debugPrint('📥 Response body: ${response.body}');
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception(
+            'Failed to update comment ${isLike ? "like" : "dislike"}. Status: ${response.statusCode}');
+      }
     } catch (e) {
-      return 707; // network / unexpected error
+      debugPrint('❌ Error updating comment like/dislike: $e');
+      rethrow;
+    }
+  }
+
+  // Alternative method if your backend uses a single endpoint with parameters
+  Future<void> updateCommentReaction(
+      String commentId, String reactionType) async {
+    try {
+      debugPrint('📤 Sending reaction "$reactionType" for comment: $commentId');
+
+      final response = await http.post(
+        Uri.parse("$baseUrl/posts/comment_reaction/$commentId"),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'reaction': reactionType}), // 'like' or 'dislike'
+      );
+
+      debugPrint('📥 Response status: ${response.statusCode}');
+      debugPrint('📥 Response body: ${response.body}');
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception(
+            'Failed to update comment reaction. Status: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('❌ Error updating comment reaction: $e');
+      rethrow;
     }
   }
 

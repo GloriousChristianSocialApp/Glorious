@@ -21,15 +21,15 @@ class _RequestOtpScreenState extends State<RequestOtpScreen> {
 
     setState(() => _loading = true);
     try {
-      final email =
+      final data =
           await ApiService().requestOtp(_usernameController.text.trim());
       if (mounted) {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (_) => VerifyOtpScreen(
-              userId: _usernameController.text.trim(),
-              email: email!,
+              userId: data['user_id'],
+              email: data['email']
             ),
           ),
         );
@@ -104,9 +104,11 @@ class _RequestOtpScreenState extends State<RequestOtpScreen> {
               TextField(
                 controller: _usernameController,
                 enabled: !_loading,
+                style: TextStyle(color: Colors.black),
                 decoration: InputDecoration(
                   hintText: 'Enter Username',
-                  prefixIcon: const Icon(Icons.person),
+                  hintStyle: TextStyle(color: Colors.black),
+                  prefixIcon: const Icon(Icons.person , color: Colors.black,),
                   fillColor: Colors.white,
                   filled: true,
                   border: OutlineInputBorder(
@@ -121,7 +123,7 @@ class _RequestOtpScreenState extends State<RequestOtpScreen> {
                 child: ElevatedButton(
                   onPressed: _loading ? null : _sendOtp,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurpleAccent,
+                    backgroundColor: const Color.fromARGB(255, 52, 9, 170),
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -138,7 +140,7 @@ class _RequestOtpScreenState extends State<RequestOtpScreen> {
                         )
                       : const Text(
                           'Send Verification Code',
-                          style: TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: 16, color: Color.fromARGB(255, 255, 255, 255)),
                         ),
                 ),
               ),
@@ -276,9 +278,11 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                   fontSize: 24,
                   letterSpacing: 8,
                   fontWeight: FontWeight.bold,
+                  color: Colors.black
                 ),
                 decoration: InputDecoration(
-                  hintText: '000000',
+                  hintText: '******',
+                  hintStyle: TextStyle(color: const Color.fromARGB(255, 196, 193, 193)),
                   fillColor: Colors.white,
                   filled: true,
                   border: OutlineInputBorder(
@@ -293,7 +297,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                 child: ElevatedButton(
                   onPressed: _loading ? null : _verifyOtp,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurpleAccent,
+                    backgroundColor: const Color.fromARGB(255, 52, 9, 170),
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -432,7 +436,7 @@ class _SetNewPasswordScreenState extends State<SetNewPasswordScreen> {
               const Icon(
                 Icons.lock_open,
                 size: 80,
-                color: Colors.white,
+                color: Color.fromARGB(255, 13, 13, 13),
               ),
               const SizedBox(height: 24),
               const Text(
@@ -457,14 +461,16 @@ class _SetNewPasswordScreenState extends State<SetNewPasswordScreen> {
                 controller: _passwordController,
                 enabled: !_loading,
                 obscureText: _obscurePassword,
+                style: TextStyle(color: Colors.black),
                 decoration: InputDecoration(
                   hintText: 'Enter new password',
-                  prefixIcon: const Icon(Icons.lock),
+                  hintStyle: TextStyle(color: Colors.black),
+                  prefixIcon: const Icon(Icons.lock, color: Colors.black,),
                   suffixIcon: IconButton(
                     icon: Icon(
                       _obscurePassword
                           ? Icons.visibility
-                          : Icons.visibility_off,
+                          : Icons.visibility_off, color: Colors.black,
                     ),
                     onPressed: () {
                       setState(() => _obscurePassword = !_obscurePassword);
@@ -483,14 +489,16 @@ class _SetNewPasswordScreenState extends State<SetNewPasswordScreen> {
                 controller: _confirmPasswordController,
                 enabled: !_loading,
                 obscureText: _obscureConfirmPassword,
+                style: TextStyle(color: Colors.black),
                 decoration: InputDecoration(
                   hintText: 'Confirm new password',
-                  prefixIcon: const Icon(Icons.lock_outline),
+                  hintStyle: TextStyle(color: Colors.black),
+                  prefixIcon: const Icon(Icons.lock_outline , color: Colors.black,),
                   suffixIcon: IconButton(
                     icon: Icon(
                       _obscureConfirmPassword
                           ? Icons.visibility
-                          : Icons.visibility_off,
+                          : Icons.visibility_off, color: Colors.black,
                     ),
                     onPressed: () {
                       setState(() =>
@@ -511,7 +519,7 @@ class _SetNewPasswordScreenState extends State<SetNewPasswordScreen> {
                 child: ElevatedButton(
                   onPressed: _loading ? null : _setPassword,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurpleAccent,
+                    backgroundColor: const Color.fromARGB(255, 52, 9, 170),
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),

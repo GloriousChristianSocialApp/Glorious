@@ -262,8 +262,8 @@ class _AccountScreenState extends State<AccountScreen>
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Theme.of(context).colorScheme.primary,
-                      Theme.of(context).colorScheme.primaryContainer,
+                      Theme.of(context).colorScheme.onPrimaryContainer,
+                      Theme.of(context).colorScheme.onPrimaryContainer,
                     ],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
@@ -291,20 +291,20 @@ class _AccountScreenState extends State<AccountScreen>
                               ),
                     ),
                     const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        'Member since ${_formatJoinDate(_parseDate(_account!.joinDate))}',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.white,
-                            ),
-                      ),
-                    ),
+                    // Container(
+                    //   padding: const EdgeInsets.symmetric(
+                    //       horizontal: 12, vertical: 4),
+                    //   decoration: BoxDecoration(
+                    //     color: Colors.white.withOpacity(0.2),
+                    //     borderRadius: BorderRadius.circular(12),
+                    //   ),
+                    //   child: Text(
+                    //     'Member since ${_formatJoinDate(_parseDate(_account!.joinDate))}',
+                    //     style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    //           color: Colors.white,
+                    //         ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),

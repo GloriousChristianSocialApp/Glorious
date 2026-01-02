@@ -62,8 +62,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             ? Icons.mark_email_read
                             : Icons.mark_email_unread,
                         color: notification.isRead
-                            ? Colors.grey
-                            : Theme.of(context).primaryColor,
+
+                            ? Theme.of(context).colorScheme.primary
+                            : Theme.of(context).colorScheme.primary,
                       ),
                       title: Text(notification.title),
                       subtitle: Text(notification.message),

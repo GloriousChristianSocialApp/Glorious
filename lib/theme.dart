@@ -156,10 +156,10 @@ ThemeData get lightTheme => ThemeData(
 ThemeData get darkTheme => ThemeData(
   useMaterial3: true,
   colorScheme: ColorScheme.dark(
-    primary: DarkModeColors.darkPrimary,
+    primary: const Color.fromARGB(255, 196, 102, 236),
     onPrimary: DarkModeColors.darkOnPrimary,
     primaryContainer: DarkModeColors.darkPrimaryContainer,
-    onPrimaryContainer: DarkModeColors.darkOnPrimaryContainer,
+    onPrimaryContainer: const Color.fromARGB(255, 182, 52, 238),
     secondary: DarkModeColors.darkSecondary,
     onSecondary: DarkModeColors.darkOnSecondary,
     tertiary: DarkModeColors.darkTertiary,

@@ -25,6 +25,7 @@ dependencies:
   flutter_local_notifications: ^17.1.2
   web_socket_channel: ^3.0.3
   video_player: ^2.8.2
+  flutter_webrtc: ^1.2.1
 
 dev_dependencies:
   flutter_test:

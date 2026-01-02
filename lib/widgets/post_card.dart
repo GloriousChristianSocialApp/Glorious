@@ -54,7 +54,7 @@ class PostCard extends StatelessWidget {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (_) => Commentpage(PostId: "${post.id}")));
+                          builder: (_) => Commentpage(PostId: post.id)));
                 },
                 label: Text("${post.commentsCount}"),
                 icon: Icon(Icons.comment_sharp),

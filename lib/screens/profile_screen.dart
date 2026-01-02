@@ -273,7 +273,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     // Friend Action Button
                     if (!_isCurrentUser) ...[
                       if (_isFriend)
-                        Container(
+                        SizedBox(
                           width: double.infinity,
                           child: ElevatedButton.icon(
                             onPressed: () {},
@@ -290,7 +290,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         )
                       else if (_hasSentRequest)
-                        Container(
+                        SizedBox(
                           width: double.infinity,
                           child: ElevatedButton.icon(
                             onPressed: null,
@@ -309,7 +309,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       else if (_hasReceivedRequest)
                         Column(
                           children: [
-                            Container(
+                            SizedBox(
                               width: double.infinity,
                               child: ElevatedButton.icon(
                                 onPressed: () async {
@@ -340,7 +340,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             ),
                             const SizedBox(height: 12),
-                            Container(
+                            SizedBox(
                               width: double.infinity,
                               child: OutlinedButton.icon(
                                 onPressed: () async {
@@ -374,7 +374,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ],
                         )
                       else
-                        Container(
+                        SizedBox(
                           width: double.infinity,
                           child: ElevatedButton.icon(
                             onPressed: _sendFriendRequest,

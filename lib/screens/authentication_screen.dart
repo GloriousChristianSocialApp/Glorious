@@ -287,8 +287,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         if (result.statusCode == 200) {
                           setState(() => errorMessage = null);
-                          Navigator.push(
-                              context, MaterialPageRoute(builder: (_) => MainNavigation()));
+                          Navigator.pushAndRemoveUntil(
+                              context, MaterialPageRoute(builder: (_) => MainNavigation()), (_) => false);
                           // Navigate to home
                         } else {
                           setState(() => errorMessage = result.message);
@@ -505,10 +505,11 @@ class _SignupScreenState extends State<SignupScreen> {
 
                         if (result.statusCode == 201) {
                           setState(() => errorMessage = null);
-                          Navigator.push(
+                          Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                  builder: (_) => MainNavigation()));
+                                  builder: (_) => MainNavigation()),
+                              (_) => false);
                         } else {
                           setState(() => errorMessage = result.message);
                         }

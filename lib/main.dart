@@ -50,12 +50,8 @@ class _ChurchAppState extends State<ChurchApp> {
     if (!mounted) return;
 
     setState(() {
-      if (loggedIn == null) {
-        _isLoggedIn = false;
-      } else {
-        _isLoggedIn = loggedIn;
-      }
-    });
+      _isLoggedIn = loggedIn;
+        });
   }
 
   @override
@@ -92,3 +88,4 @@ class SplashScreen extends StatelessWidget {
     );
   }
 }
+
