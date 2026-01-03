@@ -3,6 +3,9 @@ import cloudinary.uploader
 from cloudinary.utils import cloudinary_url
 import os
 
+import dotenv
+dotenv.load_dotenv()
+
 # Configuration       
 cloudinary.config( 
     cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME"), 
