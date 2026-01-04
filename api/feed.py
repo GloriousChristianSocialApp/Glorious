@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from datetime import datetime
 from bson.objectid import ObjectId
-from client.mongo_client import db , users_collection , friend_requests_collection
+from client.mongo_client import  users_collection , friend_requests_collection , posts_collection
 from client.cloudinary_client import config_cloudinary
 import cloudinary
 import cloudinary.uploader
@@ -88,14 +88,14 @@ def get_feed_posts(user_id):
 
     if not friend_ids:
         # FALLBACK: If no friends, show everything in the DB (paginated)
-        posts = list(db.posts.find({})
+        posts = list(posts_collection.find({})
                      .sort("createdAt", -1)
                      .skip(skip)
                      .limit(limit))
     else:
         # CUSTOM FEED: Only show friends + user (paginated)
         ids = friend_ids + [user_id]
-        posts = list(db.posts.find({"userId": {"$in": ids}})
+        posts = list(posts_collection.find({"userId": {"$in": ids}})
                      .sort("createdAt", -1)
                      .skip(skip)
                      .limit(limit))
@@ -138,32 +138,158 @@ def create_post():
         "verseReference": data.get("verseReference"),
     }
 
-    result = db.posts.insert_one(post_doc)
+    result = posts_collection.insert_one(post_doc)
     post_doc["_id"] = result.inserted_id
 
     return jsonify(post_to_json(post_doc)), 201
 
 @feed_bp.route("/posts/<user_id>", methods=["GET"])
 def get_user_posts(user_id):
-    posts = list(db.posts.find({"userId": user_id}).sort("createdAt", -1))
+    posts = list(posts_collection.find({"userId": user_id}).sort("createdAt", -1))
     posts_json = [post_to_json(post) for post in posts]
     return jsonify(posts_json)
 
 
 @feed_bp.route("/posts/<post_id>", methods=["DELETE"])
 def delete_post(post_id):
-    db.posts.delete_one({"_id": ObjectId(post_id)})
-    db.likes.delete_many({"postId": post_id})
-    db.comments.delete_many({"postId": post_id})
+    posts_collection.delete_one({"_id": ObjectId(post_id)})
+    
+    comments_collection.delete_many({"post_id": post_id})
     return jsonify({"success": True})
 
 @feed_bp.route("/posts/all", methods=["GET"])
 def get_all_posts():
-    posts = list(db.posts.find({}).sort("createdAt", -1))
+    posts = list(posts_collection.find({}).sort("createdAt", -1))
     posts_json = [post_to_json(post) for post in posts]
     return jsonify(posts_json)
 
 from client.mongo_client import comments_collection
+
+@feed_bp.route("/posts/post_likes/<post_id>", methods=["POST"])
+def like_comment(post_id):
+    try:
+        # Validate comment_id
+        if not ObjectId.is_valid(post_id):
+            return jsonify({"error": "Invalid post ID"}), 400
+        
+        # Increment the likes count for the comment
+        result = posts_collection.update_one(
+            {"_id": ObjectId(post_id)},
+            {"$inc": {"likesCount": 1}}
+        )
+        
+        if result.matched_count == 0:
+            return jsonify({"error": "Comment not found"}), 404
+        
+        # Get updated comment to return new like count
+        updated_post = posts_collection.find_one(
+            {"_id": ObjectId(post_id)},
+            {"likes": 1, "_id": 0}
+        )
+        
+        return jsonify({
+            "message": "Comment liked successfully",
+            "likes": updated_post.get("likesCount", 0)
+        }), 200
+    
+    except Exception as e:
+        print(f"Error liking comment: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+
+# Route for disliking a comment
+@feed_bp.route("/posts/post_dislikes/<post_id>", methods=["POST"])
+def dislike_comment(post_id):
+    try:
+        # Validate comment_id
+        if not ObjectId.is_valid(post_id):
+            return jsonify({"error": "Invalid Post ID"}), 400
+        
+        # Increment the dislikes count for the comment
+        result = posts_collection.update_one(
+            {"_id": ObjectId(post_id)},
+            {"$inc": {"dislikesCount": 1}}
+        )
+        
+        if result.matched_count == 0:
+            return jsonify({"error": "Comment not found"}), 404
+        
+        # Get updated comment to return new dislike count
+        updated_post = posts_collection.find_one(
+            {"_id": ObjectId(post_id)},
+            {"dislikesCount": 1, "_id": 0}
+        )
+        
+        return jsonify({
+            "message": "Comment disliked successfully",
+            "dislikes": updated_post.get("dislikesCount", 0)
+        }), 200
+    
+    except Exception as e:
+        print(f"Error disliking comment: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+
+# Route to remove a like (undo like)
+@feed_bp.route("/posts/post_likes/<post_id>", methods=["DELETE"])
+def unlike_comment(post_id):
+    try:
+        if not ObjectId.is_valid(post_id):
+            return jsonify({"error": "Invalid Post ID"}), 400
+        
+        # Decrement likes, but don't go below 0
+        result = posts_collection.update_one(
+            {"_id": ObjectId(post_id), "likesCount": {"$gt": 0}},
+            {"$inc": {"likes": -1}}
+        )
+        
+        if result.matched_count == 0:
+            return jsonify({"error": "Comment not found or likes already at 0"}), 404
+        
+        updated_post = posts_collection.find_one(
+            {"_id": ObjectId(post_id)},
+            {"likesCount": 1, "_id": 0}
+        )
+        
+        return jsonify({
+            "message": "Like removed successfully",
+            "likes": updated_post.get("likesCount", 0)
+        }), 200
+    
+    except Exception as e:
+        print(f"Error removing like: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+
+# Route to remove a dislike (undo dislike)
+@feed_bp.route("/posts/post_dislikes/<post_id>", methods=["DELETE"])
+def remove_dislike_comment(post_id):
+    try:
+        if not ObjectId.is_valid(post_id):
+            return jsonify({"error": "Invalid Post ID"}), 400
+        
+        # Decrement dislikes, but don't go below 0
+        result = posts_collection.update_one(
+            {"_id": ObjectId(post_id), "dislikesCount": {"$gt": 0}},
+            {"$inc": {"dislikesCount": -1}}
+        )
+        
+        if result.matched_count == 0:
+            return jsonify({"error": "Comment not found or dislikes already at 0"}), 404
+        
+        updated_post = posts_collection.find_one(
+            {"_id": ObjectId(post_id)},
+            {"dislikes": 1, "_id": 0}
+        )
+        
+        return jsonify({
+            "message": "Dislike removed successfully",
+            "dislikes": updated_post.get("dislikesCount", 0)
+        }), 200
+    
+    except Exception as e:
+        print(f"Error removing dislike: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
 @feed_bp.route("/posts/comment/<post_id>", methods=["POST"])
 def add_comment(post_id):
@@ -183,7 +309,7 @@ def add_comment(post_id):
     comments_collection.insert_one(comment)
     
     # Update comment count in posts collection
-    result = db.posts.update_one(
+    result = posts_collection.update_one(
         {"_id": ObjectId(post_id)},
         {"$inc": {"commentsCount": 1}}
     )
@@ -320,7 +446,7 @@ def dislike_comment(comment_id):
         return jsonify({"error": str(e)}), 500
 
 
-# Optional: Route to remove a like (undo like)
+# Route to remove a like (undo like)
 @feed_bp.route("/posts/comment_likes/<comment_id>", methods=["DELETE"])
 def unlike_comment(comment_id):
     try:
@@ -351,7 +477,7 @@ def unlike_comment(comment_id):
         return jsonify({"error": str(e)}), 500
 
 
-# Optional: Route to remove a dislike (undo dislike)
+# Route to remove a dislike (undo dislike)
 @feed_bp.route("/posts/comment_dislikes/<comment_id>", methods=["DELETE"])
 def remove_dislike_comment(comment_id):
     try:
@@ -381,68 +507,3 @@ def remove_dislike_comment(comment_id):
         print(f"Error removing dislike: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
-
-# Alternative: Single endpoint for both like and dislike with action parameter
-@feed_bp.route("/posts/comment_reaction/<comment_id>", methods=["POST"])
-def update_comment_reaction(comment_id):
-    try:
-        if not ObjectId.is_valid(comment_id):
-            return jsonify({"error": "Invalid comment ID"}), 400
-        
-        data = request.get_json()
-        reaction_type = data.get("reaction")  # "like" or "dislike"
-        
-        if reaction_type not in ["like", "dislike"]:
-            return jsonify({"error": "Invalid reaction type. Use 'like' or 'dislike'"}), 400
-        
-        # Update the appropriate field
-        field_to_update = "likes" if reaction_type == "like" else "dislikes"
-        
-        result = comments_collection.update_one(
-            {"_id": ObjectId(comment_id)},
-            {"$inc": {field_to_update: 1}}
-        )
-        
-        if result.matched_count == 0:
-            return jsonify({"error": "Comment not found"}), 404
-        
-        updated_comment = comments_collection.find_one(
-            {"_id": ObjectId(comment_id)},
-            {"likes": 1, "dislikes": 1, "_id": 0}
-        )
-        
-        return jsonify({
-            "message": f"Comment {reaction_type}d successfully",
-            "likes": updated_comment.get("likes", 0),
-            "dislikes": updated_comment.get("dislikes", 0)
-        }), 200
-    
-    except Exception as e:
-        print(f"Error updating comment reaction: {str(e)}")
-        return jsonify({"error": str(e)}), 500
-
-
-# Optional: Get comment statistics
-@feed_bp.route("/posts/comment_stats/<comment_id>", methods=["GET"])
-def get_comment_stats(comment_id):
-    try:
-        if not ObjectId.is_valid(comment_id):
-            return jsonify({"error": "Invalid comment ID"}), 400
-        
-        comment = comments_collection.find_one(
-            {"_id": ObjectId(comment_id)},
-            {"likes": 1, "dislikes": 1, "recomments": 1, "_id": 0}
-        )
-        
-        if not comment:
-            return jsonify({"error": "Comment not found"}), 404
-        
-        return jsonify({
-            "likes": comment.get("likes", 0),
-            "dislikes": comment.get("dislikes", 0),
-            "recomments": comment.get("recomments", 0)
-        }), 200
-    
-    except Exception as e:
-        print(f"Error fetching comment stats: {str(e)}")
-        return jsonify({"error": str(e)}), 500
