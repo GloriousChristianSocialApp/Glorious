@@ -390,6 +390,31 @@ class ApiService {
     }
   }
 
+    Future<void> updatePostReaction(String PostId, bool isLike) async {
+    try {
+      final endpoint = isLike ? 'post_likes' : 'post_dislikes';
+
+      debugPrint(
+          '📤 Sending ${isLike ? "like" : "dislike"} for comment: $PostId');
+
+      final response = await http.post(
+        Uri.parse("$baseUrl/posts/$endpoint/$PostId"),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      debugPrint('📥 Response status: ${response.statusCode}');
+      debugPrint('📥 Response body: ${response.body}');
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception(
+            'Failed to update comment ${isLike ? "like" : "dislike"}. Status: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('❌ Error updating comment like/dislike: $e');
+      rethrow;
+    }
+  }
+
 Future<int> addComment(String postId, String commentMessage) async {
     try {
       final commentorUserId = await getUserId(); // 🔥 FIX
@@ -436,31 +461,7 @@ Future<int> addComment(String postId, String commentMessage) async {
     }
   }
 
-  // Alternative method if your backend uses a single endpoint with parameters
-  Future<void> updateCommentReaction(
-      String commentId, String reactionType) async {
-    try {
-      debugPrint('📤 Sending reaction "$reactionType" for comment: $commentId');
-
-      final response = await http.post(
-        Uri.parse("$baseUrl/posts/comment_reaction/$commentId"),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'reaction': reactionType}), // 'like' or 'dislike'
-      );
-
-      debugPrint('📥 Response status: ${response.statusCode}');
-      debugPrint('📥 Response body: ${response.body}');
-
-      if (response.statusCode != 200 && response.statusCode != 201) {
-        throw Exception(
-            'Failed to update comment reaction. Status: ${response.statusCode}');
-      }
-    } catch (e) {
-      debugPrint('❌ Error updating comment reaction: $e');
-      rethrow;
-    }
-  }
-
+  
 Future<Map<String, dynamic>?> getPostComments(String postId) async {
     try {
       final response = await http.get(

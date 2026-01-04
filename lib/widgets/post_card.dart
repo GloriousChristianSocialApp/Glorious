@@ -1,12 +1,87 @@
+import 'package:Glorious/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import '../../models/post.dart';
 import 'package:Glorious/screens/commentpage.dart';
 
-class PostCard extends StatelessWidget {
+class PostCard extends StatefulWidget {
   final Post post;
   const PostCard({super.key, required this.post});
 
+  @override
+  State<PostCard> createState() => _PostCardState();
+}
+
+class _PostCardState extends State<PostCard> {
+  late int currentLikes;
+  late int currentDislikes;
+  bool isLiking = false;
+  bool isDisliking = false;
+
+  void initState() {
+    super.initState();
+    currentLikes = widget.post.likesCount;
+    currentDislikes = widget.post.dislikescount;
+  }
+
+  Future<void> handleLike() async {
+    if (isLiking) return;
+
+    setState(() {
+      isLiking = true;
+      currentLikes++;
+    });
+
+    try {
+      await ApiService().updatePostReaction(widget.post.id, true);
+    } catch (e) {
+      // Revert on error
+      setState(() {
+        currentLikes--;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to like comment')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLiking = false;
+        });
+      }
+    }
+  }
+
+  Future<void> handleDislike() async {
+    if (isDisliking) return;
+
+    setState(() {
+      isDisliking = true;
+      currentDislikes++;
+    });
+
+    try {
+      await ApiService().updatePostReaction(widget.post.id, false);
+    } catch (e) {
+      // Revert on error
+      setState(() {
+        currentDislikes--;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to dislike comment')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          isDisliking = false;
+        });
+      }
+    }
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -16,47 +91,51 @@ class PostCard extends StatelessWidget {
         children: [
           ListTile(
             leading: CircleAvatar(
-              backgroundImage: NetworkImage(post.userProfileImage),
+              backgroundImage: NetworkImage(widget.post.userProfileImage),
             ),
-            title: Text(post.userName),
-            subtitle: Text(post.createdAt.toLocal().toString()),
+            title: Text(widget.post.userName),
+            subtitle: Text(widget.post.createdAt.toLocal().toString()),
           ),
           Padding(
             padding: const EdgeInsets.all(12),
-            child: Text(post.content),
+            child: Text(widget.post.content),
           ),
-          if (post.mediaType == 'image')
+          if (widget.post.mediaType == 'image')
             SizedBox(
               width: double.infinity,
               height: 300,
               child: Image.network(
-                post.mediaUrl!,
+                widget.post.mediaUrl!,
                 fit: BoxFit.contain,
               ),
             ),
-          if (post.mediaType == 'video') VideoPlayerWidget(url: post.mediaUrl!),
+          if (widget.post.mediaType == 'video') VideoPlayerWidget(url: widget.post.mediaUrl!),
           const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               ElevatedButton.icon(
-                onPressed: () {},
-                label: Text("${post.likesCount}"),
-                icon: Icon(Icons.thumb_up),
+                onPressed: isLiking ? null : handleLike,
+                label: Text("$currentLikes"),
+                icon: Icon(Icons.thumb_up , color: isLiking
+                        ? Color.fromARGB(255, 200, 14, 217)
+                        : Colors.white),
               ),
               ElevatedButton.icon(
-                onPressed: () {},
-                label: Text("${post.dislikescount}"),
-                icon: Icon(Icons.thumb_down),
+                onPressed: isDisliking ? null : handleDislike,
+                label: Text("$currentDislikes"),
+                icon: Icon(Icons.thumb_down , color: isDisliking
+                        ? Color.fromARGB(255, 248, 13, 13)
+                        : Colors.white),
               ),
               ElevatedButton.icon(
                 onPressed: () {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (_) => Commentpage(PostId: post.id)));
+                          builder: (_) => Commentpage(PostId: widget.post.id)));
                 },
-                label: Text("${post.commentsCount}"),
+                label: Text("${widget.post.commentsCount}"),
                 icon: Icon(Icons.comment_sharp),
               ),
             ],

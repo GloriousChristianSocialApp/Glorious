@@ -147,7 +147,9 @@ class _CommentCardState extends State<CommentCard> {
                         height: 16,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Icon(Icons.thumb_up),
+                    :Icon(Icons.thumb_up , color: isLiking
+                            ? Color.fromARGB(255, 200, 14, 217)
+                            : Colors.white),
               ),
               const SizedBox(width: 8),
               ElevatedButton.icon(
@@ -159,7 +161,7 @@ class _CommentCardState extends State<CommentCard> {
                         height: 16,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Icon(Icons.thumb_down),
+                    : Icon(Icons.thumb_down , color: isDisliking? Color.fromARGB(255, 248, 13, 13) : Colors.white),
               ),
               const SizedBox(width: 8),
               ElevatedButton.icon(
