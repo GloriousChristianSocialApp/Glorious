@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from datetime import datetime
 from bson.objectid import ObjectId
-from client.mongo_client import  users_collection , friend_requests_collection , posts_collection
+from client.mongo_client import  users_collection , friend_requests_collection , posts_collection , comments_collection
 from client.cloudinary_client import config_cloudinary
 import cloudinary
 import cloudinary.uploader
@@ -163,10 +163,9 @@ def get_all_posts():
     posts_json = [post_to_json(post) for post in posts]
     return jsonify(posts_json)
 
-from client.mongo_client import comments_collection
 
 @feed_bp.route("/posts/post_likes/<post_id>", methods=["POST"])
-def like_comment(post_id):
+def like_post(post_id):
     try:
         # Validate comment_id
         if not ObjectId.is_valid(post_id):
@@ -199,7 +198,7 @@ def like_comment(post_id):
 
 # Route for disliking a comment
 @feed_bp.route("/posts/post_dislikes/<post_id>", methods=["POST"])
-def dislike_comment(post_id):
+def dislike_post(post_id):
     try:
         # Validate comment_id
         if not ObjectId.is_valid(post_id):
@@ -232,7 +231,7 @@ def dislike_comment(post_id):
 
 # Route to remove a like (undo like)
 @feed_bp.route("/posts/post_likes/<post_id>", methods=["DELETE"])
-def unlike_comment(post_id):
+def unlike_post(post_id):
     try:
         if not ObjectId.is_valid(post_id):
             return jsonify({"error": "Invalid Post ID"}), 400
@@ -263,7 +262,7 @@ def unlike_comment(post_id):
 
 # Route to remove a dislike (undo dislike)
 @feed_bp.route("/posts/post_dislikes/<post_id>", methods=["DELETE"])
-def remove_dislike_comment(post_id):
+def remove_dislike_post(post_id):
     try:
         if not ObjectId.is_valid(post_id):
             return jsonify({"error": "Invalid Post ID"}), 400
@@ -289,7 +288,7 @@ def remove_dislike_comment(post_id):
     
     except Exception as e:
         print(f"Error removing dislike: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"erroPsr": str(e)}), 500
 
 @feed_bp.route("/posts/comment/<post_id>", methods=["POST"])
 def add_comment(post_id):
