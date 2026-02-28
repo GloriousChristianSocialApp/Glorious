@@ -17,6 +17,10 @@ class _PostCardState extends State<PostCard> {
   late int currentDislikes;
   bool isLiking = false;
   bool isDisliking = false;
+  
+  // Track user's reaction state
+  bool hasLiked = false;
+  bool hasDisliked = false;
 
   void initState() {
     super.initState();
@@ -25,11 +29,20 @@ class _PostCardState extends State<PostCard> {
   }
 
   Future<void> handleLike() async {
-    if (isLiking) return;
+    if (isLiking || hasLiked) return;
+
+    // If user has disliked, remove dislike first
+    if (hasDisliked) {
+      setState(() {
+        currentDislikes--;
+        hasDisliked = false;
+      });
+    }
 
     setState(() {
       isLiking = true;
       currentLikes++;
+      hasLiked = true;
     });
 
     try {
@@ -38,10 +51,16 @@ class _PostCardState extends State<PostCard> {
       // Revert on error
       setState(() {
         currentLikes--;
+        hasLiked = false;
+        // Restore dislike if it was removed
+        if (!hasDisliked && currentDislikes < widget.post.dislikescount) {
+          currentDislikes++;
+          hasDisliked = true;
+        }
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to like comment')),
+          const SnackBar(content: Text('Failed to like post')),
         );
       }
     } finally {
@@ -54,11 +73,20 @@ class _PostCardState extends State<PostCard> {
   }
 
   Future<void> handleDislike() async {
-    if (isDisliking) return;
+    if (isDisliking || hasDisliked) return;
+
+    // If user has liked, remove like first
+    if (hasLiked) {
+      setState(() {
+        currentLikes--;
+        hasLiked = false;
+      });
+    }
 
     setState(() {
       isDisliking = true;
       currentDislikes++;
+      hasDisliked = true;
     });
 
     try {
@@ -67,10 +95,16 @@ class _PostCardState extends State<PostCard> {
       // Revert on error
       setState(() {
         currentDislikes--;
+        hasDisliked = false;
+        // Restore like if it was removed
+        if (!hasLiked && currentLikes < widget.post.likesCount) {
+          currentLikes++;
+          hasLiked = true;
+        }
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to dislike comment')),
+          const SnackBar(content: Text('Failed to dislike post')),
         );
       }
     } finally {
@@ -115,16 +149,16 @@ class _PostCardState extends State<PostCard> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               ElevatedButton.icon(
-                onPressed: isLiking ? null : handleLike,
+                onPressed: (isLiking || hasLiked) ? null : handleLike,
                 label: Text("$currentLikes"),
-                icon: Icon(Icons.thumb_up , color: isLiking
+                icon: Icon(Icons.thumb_up, color: hasLiked
                         ? Color.fromARGB(255, 200, 14, 217)
                         : Colors.white),
               ),
               ElevatedButton.icon(
-                onPressed: isDisliking ? null : handleDislike,
+                onPressed: (isDisliking || hasDisliked) ? null : handleDislike,
                 label: Text("$currentDislikes"),
-                icon: Icon(Icons.thumb_down , color: isDisliking
+                icon: Icon(Icons.thumb_down, color: hasDisliked
                         ? Color.fromARGB(255, 248, 13, 13)
                         : Colors.white),
               ),

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:image_picker/image_picker.dart';
@@ -6,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io'; // Keep this for FileImage on non-web
 import 'dart:typed_data'; // For Uint8List
+import 'package:Glorious/services/api_service.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -37,7 +37,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> _pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       if (kIsWeb) {
         final bytes = await pickedFile.readAsBytes();
@@ -81,12 +82,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       } else if (_profileImageBytes != null) {
         formData.files.add(MapEntry(
           'profile_picture',
-          MultipartFile.fromBytes(_profileImageBytes!, filename: 'profile_pic.png'),
+          MultipartFile.fromBytes(_profileImageBytes!,
+              filename: 'profile_pic.png'),
         ));
       }
 
       final response = await _dio.post(
-        'http://127.0.0.1:5000/update-profile',
+        '${ApiService.baseUrl}/update-profile',
         data: formData,
       );
 
@@ -134,7 +136,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             Card(
               margin: const EdgeInsets.only(bottom: 16.0),
               elevation: 4,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -160,7 +163,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           child: _profileImageFile == null &&
                                   _profileImageBytes == null &&
                                   _currentProfileImageUrl == null
-                              ? Icon(Icons.camera_alt, size: 60) : null,
+                              ? Icon(Icons.camera_alt, size: 60)
+                              : null,
                         ),
                       ),
                     ),
@@ -181,7 +185,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             Card(
               margin: const EdgeInsets.only(bottom: 16.0),
               elevation: 4,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -211,7 +216,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   : ElevatedButton(
                       onPressed: _updateProfile,
                       style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                         textStyle: TextStyle(fontSize: 18),
                       ),
                       child: Text('Save Changes'),

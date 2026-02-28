@@ -33,6 +33,10 @@ class _CommentCardState extends State<CommentCard> {
   bool isLiking = false;
   bool isDisliking = false;
 
+  // Track user's reaction state
+  bool hasLiked = false;
+  bool hasDisliked = false;
+
   @override
   void initState() {
     super.initState();
@@ -41,11 +45,20 @@ class _CommentCardState extends State<CommentCard> {
   }
 
   Future<void> handleLike() async {
-    if (isLiking) return;
+    if (isLiking || hasLiked) return;
+
+    // If user has disliked, remove dislike first
+    if (hasDisliked) {
+      setState(() {
+        currentDislikes--;
+        hasDisliked = false;
+      });
+    }
 
     setState(() {
       isLiking = true;
       currentLikes++;
+      hasLiked = true;
     });
 
     try {
@@ -54,6 +67,12 @@ class _CommentCardState extends State<CommentCard> {
       // Revert on error
       setState(() {
         currentLikes--;
+        hasLiked = false;
+        // Restore dislike if it was removed
+        if (!hasDisliked && currentDislikes < widget.numberofdislikes) {
+          currentDislikes++;
+          hasDisliked = true;
+        }
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -70,11 +89,20 @@ class _CommentCardState extends State<CommentCard> {
   }
 
   Future<void> handleDislike() async {
-    if (isDisliking) return;
+    if (isDisliking || hasDisliked) return;
+
+    // If user has liked, remove like first
+    if (hasLiked) {
+      setState(() {
+        currentLikes--;
+        hasLiked = false;
+      });
+    }
 
     setState(() {
       isDisliking = true;
       currentDislikes++;
+      hasDisliked = true;
     });
 
     try {
@@ -83,6 +111,12 @@ class _CommentCardState extends State<CommentCard> {
       // Revert on error
       setState(() {
         currentDislikes--;
+        hasDisliked = false;
+        // Restore like if it was removed
+        if (!hasLiked && currentLikes < widget.numberoflikes) {
+          currentLikes++;
+          hasLiked = true;
+        }
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -139,7 +173,7 @@ class _CommentCardState extends State<CommentCard> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               ElevatedButton.icon(
-                onPressed: isLiking ? null : handleLike,
+                onPressed: (isLiking || hasLiked) ? null : handleLike,
                 label: Text("$currentLikes"),
                 icon: isLiking
                     ? const SizedBox(
@@ -147,13 +181,14 @@ class _CommentCardState extends State<CommentCard> {
                         height: 16,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    :Icon(Icons.thumb_up , color: isLiking
+                    : Icon(Icons.thumb_up,
+                        color: hasLiked
                             ? Color.fromARGB(255, 200, 14, 217)
                             : Colors.white),
               ),
               const SizedBox(width: 8),
               ElevatedButton.icon(
-                onPressed: isDisliking ? null : handleDislike,
+                onPressed: (isDisliking || hasDisliked) ? null : handleDislike,
                 label: Text("$currentDislikes"),
                 icon: isDisliking
                     ? const SizedBox(
@@ -161,7 +196,10 @@ class _CommentCardState extends State<CommentCard> {
                         height: 16,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : Icon(Icons.thumb_down , color: isDisliking? Color.fromARGB(255, 248, 13, 13) : Colors.white),
+                    : Icon(Icons.thumb_down,
+                        color: hasDisliked
+                            ? Color.fromARGB(255, 248, 13, 13)
+                            : Colors.white),
               ),
               const SizedBox(width: 8),
               ElevatedButton.icon(
