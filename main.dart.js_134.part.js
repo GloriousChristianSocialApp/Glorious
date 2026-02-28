@@ -1,6 +1,6 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var J,A,B,R,S,L,T,U,V,E,W,C={
-bbU(){return new C.Dl(null)},
+bbY(){return new C.Dl(null)},
 Dl:function Dl(d){this.a=d},
 Kz:function Kz(d,e,f){var _=this
 _.d=!0
@@ -75,7 +75,7 @@ v.az()
 x=A.bH(u,B.fh,0,u,1,u,v)
 v.x=x
 w=y.g
-v.y=new A.ay(A.cm(B.hC,x,u),new A.aC(0,1,w),w.i("ay<aB.T>"))
+v.y=new A.az(A.cm(B.hC,x,u),new A.aC(0,1,w),w.i("az<aB.T>"))
 v.tY()},
 tY(){var x=0,w=A.x(y.v),v,u=2,t=[],s=this,r,q,p
 var $async$tY=A.t(function(d,e){if(d===1){t.push(e)
@@ -92,7 +92,7 @@ case 4:u=3
 p=t.pop()
 r=A.ad(p)
 if(s.c==null){x=1
-break}s.H(new C.aCh(s,r))
+break}s.G(new C.aCh(s,r))
 x=6
 break
 case 3:x=2
@@ -115,7 +115,7 @@ x=8
 return A.q(new A.eb().B1(q),$async$x4)
 case 8:p=e
 if(s.c==null){x=1
-break}s.H(new C.aCf(s,p))
+break}s.G(new C.aCf(s,p))
 n=s.x
 n===$&&A.b()
 n.bP(0)
@@ -127,7 +127,7 @@ case 4:u=3
 l=t.pop()
 o=A.ad(l)
 if(s.c==null){x=1
-break}s.H(new C.aCg(s,o))
+break}s.G(new C.aCg(s,o))
 x=6
 break
 case 3:x=2
@@ -145,7 +145,7 @@ case 7:x=9
 return A.q(new A.eb().Bg(p.b),$async$Dd)
 case 9:r=e
 if(s.c==null){x=1
-break}s.H(new C.aCi(s,r))
+break}s.G(new C.aCi(s,r))
 case 8:u=2
 x=6
 break
@@ -154,7 +154,7 @@ n=t.pop()
 q=A.ad(n)
 A.cU("Error loading user activity: "+A.l(q))
 if(s.c==null){x=1
-break}s.H(new C.aCj(s))
+break}s.G(new C.aCj(s))
 x=6
 break
 case 3:x=2
@@ -168,7 +168,7 @@ while(true)switch(x){case 0:x=3
 return A.q(A.dN("settings",""),$async$Dx)
 case 3:t=u.c
 if(t==null){x=1
-break}s=A1.aXP(new C.aCk(),B.aB,new C.aCl(),y.b)
+break}s=A1.aXT(new C.aCk(),B.aB,new C.aCl(),y.b)
 A.bZ(t,!1).eJ(0,s)
 case 1:return A.v(v,w)}})
 return A.w($async$Dx,w)},
@@ -182,11 +182,11 @@ u.toString
 t=A.o(a0).ok.z
 if(t==null)t=d
 else{s=A.o(a0).ax.k3
-s=t.aY(A.aA(B.d.aD(178.5),s.B()>>>16&255,s.B()>>>8&255,s.B()&255))
-t=s}return A.eg(x,d,A.cb(A.bt(A.c([w,I.ar,v,G.b3,A.a5(u,d,d,d,d,t,B.b5,d,d,d),Y.bl,A.ua(!1,D.aEF,d,d,d,d,d,d,new C.aCp(e),d,d)],y.u),B.t,B.b1,B.r),d,d),d,d,d)}if(e.e==null)return A.eg(H.ej(d,d,d,!0,A.o(a0).ax.b,d,1,d,d,d,!1,d,!1,d,d,d,d,!0,d,d,d,d,d,D.kZ,d,d,d,1,d,!0),d,D.OF,d,d,d)
+s=t.aY(A.ay(B.d.aD(178.5),s.B()>>>16&255,s.B()>>>8&255,s.B()&255))
+t=s}return A.eg(x,d,A.cb(A.bt(A.c([w,I.ar,v,G.b3,A.a5(u,d,d,d,d,t,B.b5,d,d,d),Y.bl,A.ua(!1,D.aEH,d,d,d,d,d,d,new C.aCp(e),d,d)],y.u),B.t,B.b1,B.r),d,d),d,d,d)}if(e.e==null)return A.eg(H.ej(d,d,d,!0,A.o(a0).ax.b,d,1,d,d,d,!1,d,!1,d,d,d,d,!0,d,d,d,d,d,D.kZ,d,d,d,1,d,!0),d,D.OD,d,d,d)
 x=A.o(a0)
 w=y.u
-x=H.ej(A.c([A.f8(d,d,d,D.U3,d,d,e.gasC(),d,d,d,d)],w),d,d,!0,x.ax.b,d,1,d,d,d,!1,d,!1,d,d,d,d,!0,d,d,d,d,d,D.kZ,d,d,d,1,d,!0)
+x=H.ej(A.c([A.f8(d,d,d,D.U1,d,d,e.gasC(),d,d,d,d)],w),d,d,!0,x.ax.b,d,1,d,d,d,!1,d,!1,d,d,d,d,!0,d,d,d,d,d,D.kZ,d,d,d,1,d,!0)
 v=e.y
 v===$&&A.b()
 u=A.o(a0).ax
@@ -211,7 +211,7 @@ t=A.cp(A.c([t,K.dv,s,K.dv,A.dV(e.K1(a0,"Friends",r,B.uL,p==null?q.y:p),1)],w),B.
 s=A.bY(D.uF,A.o(a0).ax.b,d,d)
 r=A.o(a0).ok.r
 s=A.c([A.cp(A.c([s,Q.c5,A.a5("Recent Activity",d,d,d,d,r==null?d:r.lc(B.ai),d,d,d,d)],w),B.t,B.q,B.r,0,d),I.ar],w)
-if(e.w)s.push(A.cb(new A.aX(D.Sk,A.pW(d,A.o(a0).ax.b,d,d,d,d,d,d,d,d),d),d,d))
+if(e.w)s.push(A.cb(new A.aX(D.Si,A.pW(d,A.o(a0).ax.b,d,d,d,d,d,d,d,d),d),d,d))
 else if(J.eR(e.r)){r=A.o(a0)
 q=A.aQ(12)
 p=A.o(a0).ax
@@ -221,16 +221,16 @@ p=o==null?p.k3:o}else p=o
 p=A.kk(p.aS(0.2),1)
 o=A.o(a0).ax.k3
 n=B.d.aD(127.5)
-o=A.bY(D.uF,A.aA(n,o.B()>>>16&255,o.B()>>>8&255,o.B()&255),d,48)
+o=A.bY(D.uF,A.ay(n,o.B()>>>16&255,o.B()>>>8&255,o.B()&255),d,48)
 m=A.o(a0).ok.w
 if(m==null)m=d
 else{l=A.o(a0).ax.k3
-l=m.aY(A.aA(B.d.aD(178.5),l.B()>>>16&255,l.B()>>>8&255,l.B()&255))
+l=m.aY(A.ay(B.d.aD(178.5),l.B()>>>16&255,l.B()>>>8&255,l.B()&255))
 m=l}m=A.a5("No recent activity",d,d,d,d,m,d,d,d,d)
 l=A.o(a0).ok.Q
 if(l==null)n=d
 else{k=A.o(a0).ax.k3
-k=l.aY(A.aA(n,k.B()>>>16&255,k.B()>>>8&255,k.B()&255))
+k=l.aY(A.ay(n,k.B()>>>16&255,k.B()>>>8&255,k.B()&255))
 n=k}s.push(A.b5(d,A.bt(A.c([o,Z.iH,m,B.iI,A.a5("Start creating notes and posts to see your activity here",d,d,d,d,n,B.b5,d,d,d)],w),B.t,B.q,B.r),B.n,d,d,new A.bA(r.ax.k2,d,p,q,d,d,B.F),d,d,d,M.ek,d,d,d))}else{j=J.bo(e.r)
 i=J.G6(j,y.l)
 for(h=0;h<j;++h){r=J.ax(e.r,h)
@@ -252,24 +252,24 @@ l=r.gq9()
 k=A.o(a0).ok.Q
 if(k==null)k=d
 else{f=A.o(a0).ax.k3
-f=k.aY(A.aA(B.d.aD(178.5),f.B()>>>16&255,f.B()>>>8&255,f.B()&255))
+f=k.aY(A.ay(B.d.aD(178.5),f.B()>>>16&255,f.B()>>>8&255,f.B()&255))
 k=f}k=A.bt(A.c([n,R.Kb,A.a5(l,1,B.b7,d,d,k,d,d,d,d)],w),B.ac,B.q,B.r)
 r=e.amr(o.gms(r))
 o=A.o(a0).ok.Q
 if(o==null)o=d
 else{n=A.o(a0).ax.k3
-n=o.aY(A.aA(B.d.aD(127.5),n.B()>>>16&255,n.B()>>>8&255,n.B()&255))
+n=o.aY(A.ay(B.d.aD(127.5),n.B()>>>16&255,n.B()>>>8&255,n.B()&255))
 o=n}i[h]=A.b5(d,A.cp(A.c([m,K.dv,new A.ob(1,B.jJ,k,d),A.a5(r,d,d,d,d,o,d,d,d,d)],w),B.t,B.q,B.r,0,d),B.n,d,d,new A.bA(q.ax.k2,d,new A.ex(g,g,g,g),new A.cM(p,p,p,p),d,d,B.F),d,d,X.hI,F.ak,d,d,d)}B.b.V(s,i)}s=A.bt(s,B.ac,B.q,B.r)
 r=A.o(a0).ok.r
 r=A.a5("Quick Actions",d,d,d,d,r==null?d:r.lc(B.ai),d,d,d,d)
-q=A.aYc(A.c([e.wK(a0,"Edit Profile",L.uD,new C.aCq(e,a0)),e.wK(a0,"Notifications",E.uK,new C.aCr(e,a0)),e.wK(a0,"Privacy",E.uQ,new C.aCs(e)),e.wK(a0,"Help & Support",E.uE,new C.aCt(e)),e.wK(a0,"About",E.uG,new C.aCu(e))],w),!0,!0,!0)
-return A.eg(x,d,new A.dH(v,!1,A.lH(A.bt(A.c([u,new A.aX(F.ak,t,d),new A.aX(B.ej,s,d),new A.aX(F.ak,A.bt(A.c([r,I.ar,new N.FF(new N.ZL(2,12,12,1.5),q,d,B.V,!1,d,d,D.asg,d,!0,d,0,d,5,B.h3,B.J,d,d,B.w,B.aG,d)],w),B.ac,B.q,B.r),d)],w),B.t,B.q,B.r),d,B.J,d,d,B.V),d),d,d,d)},
+q=A.aYg(A.c([e.wK(a0,"Edit Profile",L.uD,new C.aCq(e,a0)),e.wK(a0,"Notifications",E.uK,new C.aCr(e,a0)),e.wK(a0,"Privacy",E.uQ,new C.aCs(e)),e.wK(a0,"Help & Support",E.uE,new C.aCt(e)),e.wK(a0,"About",E.uG,new C.aCu(e))],w),!0,!0,!0)
+return A.eg(x,d,new A.dH(v,!1,A.lH(A.bt(A.c([u,new A.aX(F.ak,t,d),new A.aX(B.ej,s,d),new A.aX(F.ak,A.bt(A.c([r,I.ar,new N.FF(new N.ZL(2,12,12,1.5),q,d,B.V,!1,d,d,D.ase,d,!0,d,0,d,5,B.h3,B.J,d,d,B.w,B.aG,d)],w),B.ac,B.q,B.r),d)],w),B.t,B.q,B.r),d,B.J,d,d,B.V),d),d,d,d)},
 K1(d,e,f,g,h){var x,w,v=null,u=h.aS(0.1),t=A.aQ(12),s=A.kk(h.aS(0.3),1),r=A.bY(g,h,v,24),q=A.o(d).ok.f
 q=A.a5(f,v,v,v,v,q==null?v:q.m2(h,B.ai),v,v,v,v)
 x=A.o(d).ok.Q
 if(x==null)x=v
 else{w=A.o(d).ax.k3
-w=x.aY(A.aA(B.d.aD(178.5),w.B()>>>16&255,w.B()>>>8&255,w.B()&255))
+w=x.aY(A.ay(B.d.aD(178.5),w.B()>>>16&255,w.B()>>>8&255,w.B()&255))
 x=w}return A.b5(v,A.bt(A.c([r,G.b3,q,A.a5(e,v,v,v,v,x,v,v,v,v)],y.u),B.t,B.q,B.r),B.n,v,v,new A.bA(u,v,s,t,v,v,B.F),v,v,v,F.ak,v,v,v)},
 wK(d,e,f,g){var x,w,v,u=null,t=A.aQ(12),s=A.o(d).ax,r=s.d
 s=(r==null?s.b:r).aS(0.3)
@@ -291,10 +291,10 @@ else{x=B.i.cq(x,6e7)
 if(x>0)return""+x+"m ago"
 else return"Just now"}}},
 amB(d){switch(B.b.gP(J.cl(d).split("."))){case"noteCreated":return A_.uJ
-case"postCreated":return D.Tr
-case"postLiked":return D.Tc
+case"postCreated":return D.Tp
+case"postLiked":return D.Ta
 case"friendAdded":return T.uN
-default:return D.Tb}},
+default:return D.T9}},
 Xn(d){var x,w,v=this
 switch(B.b.gP(J.cl(d).split("."))){case"noteCreated":x=v.c
 x.toString
@@ -349,19 +349,19 @@ $0(){this.a.w=!1},
 $S:0}
 C.aCk.prototype={
 $3(d,e,f){A.eN("settings")
-return U.bi4()},
+return U.bi8()},
 $C:"$3",
 $R:3,
 $S:z+1}
 C.aCl.prototype={
 $4(d,e,f,g){var x=y.A
-return A.rk(g,new A.ay(e,new A.aC(B.dq,B.j,x),x.i("ay<aB.T>")),null,!0)},
+return A.rk(g,new A.az(e,new A.aC(B.dq,B.j,x),x.i("az<aB.T>")),null,!0)},
 $C:"$4",
 $R:4,
 $S:132}
 C.aCp.prototype={
 $0(){var x=this.a
-x.H(new C.aCo(x))
+x.G(new C.aCo(x))
 x.tY()},
 $S:0}
 C.aCo.prototype={
@@ -382,7 +382,7 @@ return A.w($async$$0,w)},
 $S:13}
 C.aCn.prototype={
 $1(d){A.eN("edit_profile")
-return S.b1o()},
+return S.b1s()},
 $S:z+2}
 C.aCr.prototype={
 $0(){var x=0,w=A.x(y.v),v,u=this,t
@@ -397,7 +397,7 @@ return A.w($async$$0,w)},
 $S:13}
 C.aCm.prototype={
 $1(d){A.eN("notifications")
-return W.bgu()},
+return W.bgy()},
 $S:z+3}
 C.aCs.prototype={
 $0(){this.a.c.M(y.q).f.cL(D.ayE)
@@ -410,7 +410,7 @@ $S:0}
 C.aCu.prototype={
 $0(){var x=this.a.c
 x.toString
-V.b7V(A.bY(E.v1,A.o(x).ax.b,null,48),"Church Community App","1.0.0",A.c([E.KO],y.u),x)
+V.b7Z(A.bY(E.v1,A.o(x).ax.b,null,48),"Church Community App","1.0.0",A.c([E.KM],y.u),x)
 return null},
 $S:0};(function aliases(){var x=C.Pw.prototype
 x.agk=x.l})();(function installTearOffs(){var x=a._instance_0u
@@ -424,23 +424,23 @@ w(C.Ww,A.p_)
 x(C.Pw,A.dm)})()
 A.bO(b.typeUniverse,JSON.parse('{"Dl":{"W":[],"h":[]},"Kz":{"X":["Dl"]}}'))
 var y={c:A.L("r<A>"),u:A.L("r<h>"),A:A.L("aC<j>"),g:A.L("aC<G>"),l:A.L("h"),q:A.L("fT"),b:A.L("@"),v:A.L("~")};(function constants(){var x=a.makeConstList
-D.aES=new A.b4("No account data found",null,null,null,null,null,null,null,null,null,null,null)
-D.OF=new A.f6(B.Q,null,null,D.aES,null)
-D.Sk=new A.al(32,32,32,32)
-D.Tb=new A.aT(57918,"MaterialIcons",!1)
-D.Tc=new A.aT(57947,"MaterialIcons",!1)
+D.aEV=new A.b_("No account data found",null,null,null,null,null,null,null,null,null,null,null)
+D.OD=new A.f6(B.Q,null,null,D.aEV,null)
+D.Si=new A.al(32,32,32,32)
+D.T9=new A.aT(57918,"MaterialIcons",!1)
+D.Ta=new A.aT(57947,"MaterialIcons",!1)
 D.uF=new A.aT(58132,"MaterialIcons",!1)
-D.Tr=new A.aT(58591,"MaterialIcons",!1)
-D.Tt=new A.aT(58751,"MaterialIcons",!1)
-D.U3=new A.ch(D.Tt,null,B.k,null,null)
-D.asg=new C.Ww(null)
-D.Ua=new A.ch(B.eo,null,B.k,null,null)
-D.aEj=new A.b4("My Account",null,A0.dy,null,null,null,null,null,null,null,null,null)
-D.XW=x([D.Ua,Q.c5,D.aEj],y.u)
-D.kZ=new A.vQ(B.b8,B.q,B.r,B.t,null,B.bn,null,0,D.XW,null)
-D.aEJ=new A.b4("Help & support feature coming soon!",null,null,null,null,null,null,null,null,null,null,null)
-D.ayD=new O.e8(D.aEJ,null,null,null,null,null,null,null,B.b4,null,null,null,null,P.a7,null,null,null,B.w,null)
-D.aE6=new A.b4("Privacy settings feature coming soon!",null,null,null,null,null,null,null,null,null,null,null)
-D.ayE=new O.e8(D.aE6,null,null,null,null,null,null,null,B.b4,null,null,null,null,P.a7,null,null,null,B.w,null)
-D.aEF=new A.b4("Retry",null,null,null,null,null,null,null,null,null,null,null)})()};
-(a=>{a["AfX7TzIqmvTrt4g4nbMzap+85Bo="]=a.current})($__dart_deferred_initializers__);
+D.Tp=new A.aT(58591,"MaterialIcons",!1)
+D.Tr=new A.aT(58751,"MaterialIcons",!1)
+D.U1=new A.ch(D.Tr,null,B.k,null,null)
+D.ase=new C.Ww(null)
+D.U8=new A.ch(B.eo,null,B.k,null,null)
+D.aEl=new A.b_("My Account",null,A0.dy,null,null,null,null,null,null,null,null,null)
+D.XU=x([D.U8,Q.c5,D.aEl],y.u)
+D.kZ=new A.vQ(B.b8,B.q,B.r,B.t,null,B.bn,null,0,D.XU,null)
+D.aEM=new A.b_("Help & support feature coming soon!",null,null,null,null,null,null,null,null,null,null,null)
+D.ayD=new O.dZ(D.aEM,null,null,null,null,null,null,null,B.b4,null,null,null,null,P.a3,null,null,null,B.w,null)
+D.aE8=new A.b_("Privacy settings feature coming soon!",null,null,null,null,null,null,null,null,null,null,null)
+D.ayE=new O.dZ(D.aE8,null,null,null,null,null,null,null,B.b4,null,null,null,null,P.a3,null,null,null,B.w,null)
+D.aEH=new A.b_("Retry",null,null,null,null,null,null,null,null,null,null,null)})()};
+(a=>{a["jRMm1MIZun3+Tf9KE6OP/ECoarI="]=a.current})($__dart_deferred_initializers__);

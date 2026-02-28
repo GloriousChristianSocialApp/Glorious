@@ -1,6 +1,6 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var J,A,C,I,K,L,M,E,N,F,B={
-bcg(){return new B.DK(null)},
+bck(){return new B.DK(null)},
 DK:function DK(d){this.a=d},
 KP:function KP(d,e,f,g,h){var _=this
 _.d=d
@@ -72,7 +72,7 @@ v.az()
 x=A.bH(u,C.dJ,0,u,1,u,v)
 v.Q=x
 w=y.g
-v.as=new A.ay(A.cm(C.dH,x,u),new A.aC(0,1,w),w.i("ay<aB.T>"))
+v.as=new A.az(A.cm(C.dH,x,u),new A.aC(0,1,w),w.i("az<aB.T>"))
 v.Cd()},
 l(){var x=this.Q
 x===$&&A.b()
@@ -80,11 +80,11 @@ x.l()
 this.agm()},
 Cd(){var x=0,w=A.x(y.v),v=1,u=[],t=this,s,r
 var $async$Cd=A.t(function(d,e){if(d===1){u.push(e)
-x=v}while(true)switch(x){case 0:t.H(new B.aDL(t))
+x=v}while(true)switch(x){case 0:t.G(new B.aDL(t))
 v=3
 x=6
 return A.q(A.hk(A.c([A.dN("bible_model",""),A.dN("book_selector",""),A.dN("chapter_view","")],y.t),y.b),$async$Cd)
-case 6:t.H(new B.aDM(t))
+case 6:t.G(new B.aDM(t))
 t.Da()
 v=1
 x=5
@@ -92,7 +92,7 @@ break
 case 3:v=2
 r=u.pop()
 t.JW("Failed to load required resources")
-t.H(new B.aDN(t))
+t.G(new B.aDN(t))
 x=5
 break
 case 2:x=1
@@ -103,12 +103,12 @@ return A.w($async$Cd,w)},
 Da(){var x=0,w=A.x(y.v),v,u=2,t=[],s=[],r=this,q,p,o
 var $async$Da=A.t(function(d,e){if(d===1){t.push(e)
 x=u}while(true)switch(x){case 0:if(!r.x){x=1
-break}r.H(new B.aDF(r))
+break}r.G(new B.aDF(r))
 u=4
 x=7
 return A.q(r.d.Ir(),$async$Da)
 case 7:q=e
-r.H(new B.aDG(r,q))
+r.G(new B.aDG(r,q))
 s.push(6)
 x=5
 break
@@ -120,7 +120,7 @@ x=5
 break
 case 3:s=[2]
 case 5:u=2
-r.H(new B.aDH(r))
+r.G(new B.aDH(r))
 x=s.pop()
 break
 case 6:case 1:return A.v(v,w)
@@ -129,14 +129,14 @@ return A.w($async$Da,w)},
 tW(){var x=0,w=A.x(y.v),v,u=2,t=[],s=[],r=this,q,p,o,n
 var $async$tW=A.t(function(d,e){if(d===1){t.push(e)
 x=u}while(true)switch(x){case 0:if(r.r==null||!r.x){x=1
-break}r.H(new B.aDI(r))
+break}r.G(new B.aDI(r))
 u=4
 p=r.r
 p.toString
 x=7
 return A.q(r.d.B3(p,r.w),$async$tW)
 case 7:q=e
-r.H(new B.aDJ(r,q))
+r.G(new B.aDJ(r,q))
 p=r.Q
 p===$&&A.b()
 p.bP(0)
@@ -151,7 +151,7 @@ x=5
 break
 case 3:s=[2]
 case 5:u=2
-r.H(new B.aDK(r))
+r.G(new B.aDK(r))
 x=s.pop()
 break
 case 6:case 1:return A.v(v,w)
@@ -163,15 +163,15 @@ u=u.M(y.q).f
 x=A.a5(d,v,v,v,v,v,v,v,v,v)
 w=this.c
 w.toString
-u.cL(O.hT(v,v,v,A.o(w).ax.fy,C.b4,C.w,v,x,v,P.a7,v,v,v,v,v,v,new A.bK(A.aQ(10),C.p),v,v))},
+u.cL(O.hT(v,v,v,A.o(w).ax.fy,C.b4,C.w,v,x,v,P.a3,v,v,v,v,v,v,new A.bK(A.aQ(10),C.p),v,v))},
 axd(){if(!this.x)return
 var x=this.c
 x.toString
-E.aVH(C.I,new B.aDQ(this),x,!0,y.b)},
+E.aVL(C.I,new B.aDQ(this),x,!0,y.b)},
 axf(){var x=this.c
 x.toString
-E.aVH(C.I,new B.aDU(this),x,!1,y.b)},
-I(d){var x,w,v,u,t,s,r=this,q=null,p=y.u,o=A.cp(A.c([D.U4,R.c5,D.aEc],p),C.t,C.q,C.r,0,q),n=A.o(d)
+E.aVL(C.I,new B.aDU(this),x,!1,y.b)},
+I(d){var x,w,v,u,t,s,r=this,q=null,p=y.u,o=A.cp(A.c([D.U2,R.c5,D.aEe],p),C.t,C.q,C.r,0,q),n=A.o(d)
 o=Q.ej(A.c([A.f8(q,q,q,T.v3,q,q,new B.aDV(),q,q,q,q)],p),q,q,!0,n.ax.b,q,1,q,q,q,!1,q,!1,q,q,q,q,!0,q,q,q,q,q,o,q,q,q,1,q,!0)
 n=A.o(d).ax
 x=n.d
@@ -192,7 +192,7 @@ x=A.dV(A.fs(q,A.b5(q,A.cp(A.c([A.a5(t,q,q,q,q,s==null?q:s.lc(C.bd),q,q,q,q),A.bY
 w=r.x?r.gaxe():q
 v=A.o(d)
 u=A.aQ(12)
-n=A.b5(q,A.cp(A.c([x,V.li,A.fs(q,A.b5(q,A.cp(A.c([A.a5("Ch. "+r.w,q,q,q,q,A.c1(q,q,A.o(d).ax.c,q,q,q,q,q,q,q,q,q,q,q,C.bd,q,q,!0,q,q,q,q,q,q,q,q),q,q,q,q),W.q6,A.bY(D.uH,A.o(d).ax.c,q,20)],p),C.t,C.q,C.r,0,q),C.n,q,q,new A.bA(v.ax.b,q,q,u,q,q,C.F),q,q,q,D.Sg,q,q,q),C.J,!1,q,q,q,q,q,q,q,q,q,q,q,q,q,w,q,q,q,q,q,q)],p),C.t,C.q,C.r,0,q),C.n,q,q,new A.bA(q,q,q,q,q,new A.oz(C.hj,C.hi,C.d0,n,q,q),C.F),q,q,q,L.ak,q,q,q)
+n=A.b5(q,A.cp(A.c([x,V.li,A.fs(q,A.b5(q,A.cp(A.c([A.a5("Ch. "+r.w,q,q,q,q,A.c1(q,q,A.o(d).ax.c,q,q,q,q,q,q,q,q,q,q,q,C.bd,q,q,!0,q,q,q,q,q,q,q,q),q,q,q,q),W.q6,A.bY(D.uH,A.o(d).ax.c,q,20)],p),C.t,C.q,C.r,0,q),C.n,q,q,new A.bA(v.ax.b,q,q,u,q,q,C.F),q,q,q,D.Se,q,q,q),C.J,!1,q,q,q,q,q,q,q,q,q,q,q,q,q,w,q,q,q,q,q,q)],p),C.t,C.q,C.r,0,q),C.n,q,q,new A.bA(q,q,q,q,q,new A.oz(C.hj,C.hi,C.d0,n,q,q),C.F),q,q,q,L.ak,q,q,q)
 if(r.z)x=C.bS
 else if(!r.x){x=A.o(d).ok.w
 if(x==null)x=q
@@ -219,7 +219,7 @@ x===$&&A.b()
 A.eN("chapter_view")
 w=r.f
 w.toString
-w=new A.dH(x,!1,M.bce(w),q)
+w=new A.dH(x,!1,M.bci(w),q)
 x=w}return A.eg(o,q,A.bt(A.c([n,A.dV(x,1)],p),C.t,C.q,C.r),q,q,q)}}
 B.Pz.prototype={
 bv(){this.cp()
@@ -263,11 +263,11 @@ B.aDQ.prototype={
 $1(d){var x
 A.eN("book_selector")
 x=this.a
-return I.bcd(x.e,new B.aDP(x,d),x.r)},
+return I.bch(x.e,new B.aDP(x,d),x.r)},
 $S:z+1}
 B.aDP.prototype={
 $1(d){var x=this.a
-x.H(new B.aDO(x,d))
+x.G(new B.aDO(x,d))
 x.tW()
 A.bZ(this.b,!1).eW(0,null)},
 $S:120}
@@ -282,7 +282,7 @@ $S:0}
 B.aDU.prototype={
 $1(d){var x=null,w=A.o(d),v=A.b5(x,x,C.n,x,x,new A.bA(A.o(d).ax.k3.e2(0.3),x,x,A.aQ(2),x,x,C.F),x,4,x,x,x,x,40),u=A.a5("Select Chapter  (Scroll to select)",x,x,x,x,A.o(d).ok.r,x,x,x,x),t=this.a,s=t.y.h(0,t.r)
 if(s==null)s=1
-return A.b5(x,A.bt(A.c([v,F.lk,u,F.lk,A.bG(new G.FF(D.ayt,new X.w9(new B.aDT(t),s,!0,!0,!0,x),x,C.V,!1,x,x,Y.hk,x,!1,x,0,x,s,C.h3,C.J,x,x,C.w,C.aG,x),200,x)],y.u),C.t,C.q,C.ao),C.n,x,x,new A.bA(w.ax.k2,x,x,K.iZ,x,x,C.F),x,x,x,N.ek,x,x,x)},
+return A.b5(x,A.bt(A.c([v,F.lk,u,F.lk,A.bG(new G.FF(D.ayr,new X.w9(new B.aDT(t),s,!0,!0,!0,x),x,C.V,!1,x,x,Y.hk,x,!1,x,0,x,s,C.h3,C.J,x,x,C.w,C.aG,x),200,x)],y.u),C.t,C.q,C.ao),C.n,x,x,new A.bA(w.ax.k2,x,x,K.iZ,x,x,C.F),x,x,x,N.ek,x,x,x)},
 $S:230}
 B.aDT.prototype={
 $2(d,e){var x,w,v,u,t=null,s=e+1,r=this.a,q=s===r.w
@@ -297,7 +297,7 @@ v=u==null?v.c:u}return A.fs(t,A.b5(t,A.cb(A.a5(""+s,t,t,t,t,A.c1(t,t,v,t,t,t,t,t
 $S:609}
 B.aDS.prototype={
 $0(){var x=this.a
-x.H(new B.aDR(x,this.b))
+x.G(new B.aDR(x,this.b))
 x.tW()
 A.bZ(this.c,!1).eW(0,null)},
 $S:0}
@@ -324,9 +324,9 @@ w(B.aDT,A.ed)
 x(B.Pz,A.dm)})()
 A.bO(b.typeUniverse,JSON.parse('{"DK":{"W":[],"h":[]},"KP":{"X":["DK"]}}'))
 var y=(function rtii(){var x=A.L
-return{c:x("r<A>"),t:x("r<a8<@>>"),x:x("r<m>"),u:x("r<h>"),w:x("m"),g:x("aC<G>"),q:x("fT"),b:x("@"),e:x("d"),v:x("~")}})();(function constants(){D.Sg=new A.al(20,12,20,12)
+return{c:x("r<A>"),t:x("r<a8<@>>"),x:x("r<m>"),u:x("r<h>"),w:x("m"),g:x("aC<G>"),q:x("fT"),b:x("@"),e:x("d"),v:x("~")}})();(function constants(){D.Se=new A.al(20,12,20,12)
 D.uH=new A.aT(58195,"MaterialIcons",!1)
-D.U4=new A.ch(C.nK,null,C.k,null,null)
-D.ayt=new G.ZL(5,8,8,1.2)
-D.aEc=new A.b4("Holy Bible",null,S.dy,null,null,null,null,null,null,null,null,null)})()};
-(a=>{a["8G7hRXGoHhmK2AuVi9a/nxR6Hmc="]=a.current})($__dart_deferred_initializers__);
+D.U2=new A.ch(C.nK,null,C.k,null,null)
+D.ayr=new G.ZL(5,8,8,1.2)
+D.aEe=new A.b_("Holy Bible",null,S.dy,null,null,null,null,null,null,null,null,null)})()};
+(a=>{a["m9nsE1gdoj6UPGDBFbE/cJjBB5Q="]=a.current})($__dart_deferred_initializers__);
